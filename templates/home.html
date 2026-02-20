@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="LBG Santé Formation — Prévention, Mouvement, Santé durable. Formations et accompagnements basés sur la mécanique du corps." />
+  <meta property="og:title" content="LBG Santé Formation — Prévention • Mouvement • Santé durable" />
+  <meta property="og:description" content="Formations et accompagnements terrain : prévention, mouvement, biomécanique." />
+  <meta property="og:image" content="{{ url_for('static', filename='img/logo.png') }}" />
+  <meta property="og:type" content="website" />
+
+  <title>LBG Santé Formation — Accueil</title>
+
+  <!-- Fonts & Tailwind -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- AOS -->
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+  <style>
+    :root{
+      --navy: #1E2A5A;
+      --teal: #2D8C86;
+      --brick: #B33A2B;
+      --mustard: #D79A2B;
+      --ink: #0f172a;
+      --soft: #f6f8ff;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(45,140,134,0.18) 0%, rgba(255,255,255,1) 35%, rgba(246,248,255,1) 100%);
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+
+    /* Barre de chargement */
+    .progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--brick), var(--mustard));
+      box-shadow: 0 0 10px rgba(179,58,43,0.35);
+      animation: load-bar 4s infinite;
+      z-index: 60;
+    }
+    @keyframes load-bar {
+      0% { width: 0%; }
+      50% { width: 80%; }
+      100% { width: 100%; }
+    }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      background:
+        linear-gradient(rgba(255,255,255,0.78), rgba(255,255,255,0.92)),
+        url("https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&w=1600&q=80")
+        center/cover no-repeat;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      overflow: hidden;
+      padding: 0 1rem;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(45,140,134,0.10), transparent 70%);
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding-top: 6rem; /* compense le header fixed */
+      animation: fadeInUp 1.4s ease-in-out;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .glow { text-shadow: 0 0 18px rgba(45,140,134,0.25); }
+
+    /* Cards */
+    .card {
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(30,42,90,0.12);
+      border-radius: 1rem;
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+      backdrop-filter: blur(8px);
+    }
+    .card:hover {
+      transform: scale(1.04);
+      border-color: rgba(45,140,134,0.45);
+      box-shadow: 0 0 24px rgba(45,140,134,0.18);
+    }
+
+    /* Fade-up */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 1s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Liens glow */
+    .nav-link-glow {
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--brick), var(--mustard), var(--teal), var(--brick));
+      background-size: 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: glow-shift 3s linear infinite;
+      transition: transform 0.3s ease;
+    }
+    .nav-link-glow:hover { transform: scale(1.12); }
+    @keyframes glow-shift {
+      0% { background-position: 0%; }
+      100% { background-position: 300%; }
+    }
+
+    /* Bouton UNIQUE = style "Nous contacter" */
+    .btn-cta{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+
+      font-weight: 800;
+      font-size: 0.875rem; /* text-sm */
+      padding: 0.5rem 1rem; /* px-4 py-2 */
+      border-radius: 0.5rem; /* rounded-lg */
+
+      background: var(--brick);
+      color: #fff;
+
+      transition: transform .2s ease, filter .2s ease;
+    }
+    .btn-cta:hover{
+      transform: scale(1.05);
+      filter: drop-shadow(0 0 10px rgba(179,58,43,0.30));
+    }
+
+    /* Tailles optionnelles */
+    .btn-cta.md{
+      font-size: 1rem;
+      padding: 0.75rem 1.5rem;
+    }
+    .btn-cta.lg{
+      font-size: 1.125rem;
+      padding: 0.85rem 1.75rem;
+    }
+
+    /* Empêche le dégradé dans les boutons */
+    .btn-cta .nav-link-glow{
+      -webkit-text-fill-color: #fff !important;
+      background: none !important;
+      animation: none !important;
+      text-shadow: none !important;
+    }
+
+    /* =========================
+       SEPARATION DES SECTIONS
+       ========================= */
+
+    /* Conteneur commun */
+    .section{
+      position: relative;
+      padding: 6rem 0; /* espace vertical */
+    }
+
+    /* Une section sur deux (fond très léger) */
+    .section.alt{
+      background: rgba(255,255,255,0.68);
+    }
+
+    /* Séparateur discret */
+    .section-divider{
+      height: 1px;
+      width: min(1100px, calc(100% - 3rem));
+      margin: 4rem auto 0; /* IMPORTANT : espace avant le trait */
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(30,42,90,0.10),
+        rgba(45,140,134,0.12),
+        rgba(30,42,90,0.10),
+        transparent
+      );
+      opacity: 0.35; /* plus discret */
+    }
+
+    /* Petit espace après le hero */
+    .after-hero-space{
+      margin-top: 1.5rem;
+    }
+
+    /* IMPORTANT : on enlève les ombres auto qui créaient un “trait” */
+    .section::before,
+    .section::after{
+      display: none !important;
+    }
+
+        /* ===== FLASH MESSAGES ===== */
+    .flash-wrap{
+      width: min(900px, 92vw);
+      margin: 1rem auto 0;
+      display: grid;
+      gap: .75rem;
+    }
+
+    .flash{
+      display:flex;
+      align-items:flex-start;
+      gap:.6rem;
+
+      padding: .9rem 1.1rem;
+      border-radius: .75rem;
+
+      font-size: .875rem;
+      font-weight: 600;
+
+      background: rgba(255,255,255,0.95);
+      border: 1px solid rgba(15,23,42,0.12);
+      box-shadow: 0 8px 20px rgba(15,23,42,0.08);
+    }
+
+    /* Variantes */
+    .flash.success{
+      border-color: rgba(34,197,94,.35);
+      color: #166534;
+    }
+    .flash.error{
+      border-color: rgba(239,68,68,.35);
+      color: #7f1d1d;
+    }
+    .flash.warning{
+      border-color: rgba(245,158,11,.45);
+      color: #78350f;
+    }
+    .flash.info{
+      border-color: rgba(59,130,246,.35);
+      color: #1e3a8a;
+    }
+
+    /* Animation disparition flash */
+    .flash{
+      animation: flash-in .4s ease-out forwards;
+    }
+
+    @keyframes flash-in{
+      from{
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to{
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .flash.hide{
+      animation: flash-out .4s ease-in forwards;
+    }
+
+    @keyframes flash-out{
+      from{
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to{
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+    }
+
+
+  </style>
+</head>
+
+<body class="text-slate-900">
+
+  <!-- Barre de chargement -->
+  <div class="progress-bar"></div>
+
+  <!-- ===== NAVBAR (sans version mobile) ===== -->
+  <header class="fixed top-0 w-full z-40 bg-white/75 backdrop-blur-md border-b border-slate-200">
+    <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+
+      <!-- Logo -->
+      <a href="{{ url_for('home') }}" class="flex items-center gap-3">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="LBG Santé Formation" class="h-10 w-auto">
+        <div class="text-left">
+          <h1 class="text-xl font-orbitron font-black tracking-wide text-[color:var(--navy)]">
+            LBG <span class="nav-link-glow">Santé Formation</span>
+          </h1>
+          <p class="text-xs font-semibold text-slate-500 -mt-1">Prévention • Mouvement • Santé durable</p>
+        </div>
+      </a>
+
+      <!-- Navigation -->
+      <nav class="flex space-x-6 text-sm font-semibold items-center text-slate-600">
+        <a href="{{ url_for('home') }}" class="text-[color:var(--navy)] font-extrabold">Accueil</a>
+        <a href="{{ url_for('about') }}" class="hover:text-[color:var(--teal)] transition">À propos</a>
+        <a href="{{ url_for('services') }}" class="hover:text-[color:var(--teal)] transition">Services</a>
+        <a href="{{ url_for('contact') }}" class="hover:text-[color:var(--teal)] transition">Contact</a>
+        <a href="{{ url_for('services') }}" class="nav-link-glow">Découvrir</a>
+      </nav>
+
+      <!-- CTA -->
+      {% if current_user.is_authenticated %}
+        <a href="{{ url_for('logout') }}" class="btn-cta">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
+          Déconnexion
+        </a>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="btn-cta">
+          <i data-lucide="log-in" class="w-4 h-4"></i>
+          Connexion
+        </a>
+      {% endif %}
+
+      
+    </div>
+  </header>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-wrap">
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">
+            <i data-lucide="
+              {% if category == 'success' %}check-circle
+              {% elif category == 'error' %}x-circle
+              {% elif category == 'warning' %}alert-triangle
+              {% else %}info{% endif %}
+            " class="w-5 h-5"></i>
+            <span>{{ message }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" data-aos="zoom-in" data-aos-duration="1200">
+    <div class="hero-content">
+      <p class="mb-3 tracking-widest text-xs sm:text-sm uppercase font-bold text-[color:var(--brick)]" data-aos="fade-up" data-aos-delay="100">
+        <span class="nav-link-glow">Prévention • Mouvement • Santé durable</span>
+      </p>
+
+      <h2 class="text-3xl sm:text-5xl md:text-6xl font-orbitron font-black mb-4 glow leading-tight text-[color:var(--navy)]" data-aos="fade-up" data-aos-delay="200">
+        Former & prévenir <br class="hidden sm:block"/>
+        avec une approche <span class="nav-link-glow">biomécanique</span>
+      </h2>
+
+      <p class="text-slate-600 max-w-lg sm:max-w-xl mx-auto mb-8 text-sm sm:text-base" data-aos="fade-up" data-aos-delay="300">
+        LBG Santé Formation accompagne les structures et les professionnels avec des formations modernes et des actions terrain :
+        réduction des risques, gestes efficaces, mouvement intelligent.
+      </p>
+
+      <a href="{{ url_for('services') }}" class="btn-cta md" data-aos="zoom-in" data-aos-delay="400">
+        Découvrir nos services
+      </a>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 1 ===== -->
+  <section class="section alt fade-up after-hero-space" data-aos="fade-up">
+    <div class="max-w-6xl mx-auto text-center px-6">
+      <h3 class="text-3xl font-orbitron font-black mb-12 text-[color:var(--navy)]" data-aos="zoom-in">
+        Pourquoi <span class="nav-link-glow">LBG Santé Formation</span> ?
+      </h3>
+
+      <div class="grid md:grid-cols-4 gap-8">
+        <div class="card p-8" data-aos="fade-up" data-aos-delay="100">
+          <i data-lucide="shield" class="w-10 h-10 mx-auto mb-4" style="color: var(--teal)"></i>
+          <h4 class="font-semibold mb-2 text-[color:var(--navy)]">Prévention concrète</h4>
+          <p class="text-slate-600 text-sm">Actions applicables immédiatement sur le terrain.</p>
+        </div>
+
+        <div class="card p-8" data-aos="fade-up" data-aos-delay="200">
+          <i data-lucide="settings-2" class="w-10 h-10 mx-auto mb-4" style="color: var(--teal)"></i>
+          <h4 class="font-semibold mb-2 text-[color:var(--navy)]">Biomécanique</h4>
+          <p class="text-slate-600 text-sm">Comprendre la mécanique du corps pour mieux agir.</p>
+        </div>
+
+        <div class="card p-8" data-aos="fade-up" data-aos-delay="300">
+          <i data-lucide="graduation-cap" class="w-10 h-10 mx-auto mb-4" style="color: var(--teal)"></i>
+          <h4 class="font-semibold mb-2 text-[color:var(--navy)]">Formations modernes</h4>
+          <p class="text-slate-600 text-sm">Pédagogie claire, supports actuels, cas pratiques.</p>
+        </div>
+
+        <div class="card p-8" data-aos="fade-up" data-aos-delay="400">
+          <i data-lucide="trending-up" class="w-10 h-10 mx-auto mb-4" style="color: var(--teal)"></i>
+          <h4 class="font-semibold mb-2 text-[color:var(--navy)]">Résultats durables</h4>
+          <p class="text-slate-600 text-sm">Routines et habitudes qui tiennent dans le temps.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- séparateur propre entre section 1 et 2 -->
+    <div class="section-divider"></div>
+  </section>
+
+  <!-- ===== SECTION 2 ===== -->
+  <section class="section text-center fade-up" data-aos="fade-up">
+    <h3 class="text-3xl font-orbitron font-black mb-8 text-[color:var(--navy)]" data-aos="zoom-in">
+      Nos services <span class="nav-link-glow">LBG Santé Formation</span>
+    </h3>
+
+    <p class="text-slate-600 max-w-2xl mx-auto mb-14 leading-relaxed" data-aos="fade-up" data-aos-delay="150">
+      Des prestations pensées pour le terrain : prévention, formation et mouvement.
+      Objectif : réduire les risques, améliorer les pratiques et rendre les équipes autonomes.
+    </p>
+
+    <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto text-left px-6">
+      <div class="card p-8">
+        <i data-lucide="alert-triangle" class="w-10 h-10 mb-4" style="color: var(--mustard)"></i>
+        <h4 class="font-semibold text-lg mb-2 text-[color:var(--navy)]">⚠️ Prévention & sensibilisation</h4>
+        <p class="text-slate-600 text-sm">Identifier les points d’attention, agir tôt, simplifier les bons réflexes.</p>
+      </div>
+
+      <div class="card p-8">
+        <i data-lucide="presentation" class="w-10 h-10 mb-4" style="color: var(--teal)"></i>
+        <h4 class="font-semibold text-lg mb-2 text-[color:var(--navy)]">🎓 Formations terrain</h4>
+        <p class="text-slate-600 text-sm">Sessions structurées, cas pratiques, outils concrets et transfert de compétences.</p>
+      </div>
+
+      <div class="card p-8">
+        <i data-lucide="move" class="w-10 h-10 mb-4" style="color: var(--teal)"></i>
+        <h4 class="font-semibold text-lg mb-2 text-[color:var(--navy)]">🏃 Mouvement & routines</h4>
+        <p class="text-slate-600 text-sm">Réathlétisation, ergonomie, routines simples pour bouger mieux et plus longtemps.</p>
+      </div>
+    </div>
+
+    <div class="mt-14">
+      <a href="{{ url_for('services') }}" class="btn-cta md">
+        Voir tous les services
+      </a>
+    </div>
+
+    <!-- PAS DE separateur ici pour éviter le trait au dessus du bouton de la section suivante -->
+  </section>
+
+  <!-- ===== SECTION 3 ===== -->
+  <section class="section alt text-center fade-up" data-aos="fade-up">
+    <h3 class="text-3xl font-orbitron font-black mb-6 text-[color:var(--navy)]" data-aos="zoom-in">
+      Une méthode <span class="nav-link-glow">simple</span> & efficace
+    </h3>
+
+    <p class="text-slate-600 max-w-2xl mx-auto mb-14 leading-relaxed px-6">
+      On part du réel : contraintes, gestes, fréquence, environnement.
+      Puis on construit des actions claires : <span class="font-bold" style="color: var(--brick)">moins de risques</span>,
+      <span class="font-bold" style="color: var(--teal)">plus d’efficacité</span>, et des routines qui tiennent.
+    </p>
+
+    <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto px-6">
+      <div class="card p-8">
+        <i data-lucide="search" class="w-10 h-10 mx-auto mb-4" style="color: var(--teal)"></i>
+        <h4 class="font-semibold mb-2 text-lg text-[color:var(--navy)]">Observer</h4>
+        <p class="text-slate-600 text-sm">Comprendre les contraintes et les points de friction.</p>
+      </div>
+
+      <div class="card p-8">
+        <i data-lucide="clipboard-check" class="w-10 h-10 mx-auto mb-4" style="color: var(--teal)"></i>
+        <h4 class="font-semibold mb-2 text-lg text-[color:var(--navy)]">Structurer</h4>
+        <p class="text-slate-600 text-sm">Plan d’action clair, contenu pédagogique, mise en pratique.</p>
+      </div>
+
+      <div class="card p-8">
+        <i data-lucide="repeat" class="w-10 h-10 mx-auto mb-4" style="color: var(--teal)"></i>
+        <h4 class="font-semibold mb-2 text-lg text-[color:var(--navy)]">Ancrer</h4>
+        <p class="text-slate-600 text-sm">Routines simples, répétables, et résultats durables.</p>
+      </div>
+    </div>
+
+    <div class="mt-12">
+      <a href="{{ url_for('contact') }}" class="btn-cta md">
+        Parler de votre besoin
+      </a>
+    </div>
+
+    <div class="section-divider"></div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="bg-white/70 border-t border-slate-200 py-10 text-center" data-aos="fade-up">
+    <h1 class="text-2xl font-orbitron font-black mb-2 text-[color:var(--navy)] transition">
+      LBG <span class="nav-link-glow">Santé</span> Formation
+    </h1>
+
+    <p class="text-slate-500 text-sm mt-4">
+      © 2026 LBG Santé Formation —
+      <a href="{{ url_for('contact') }}" class="underline font-semibold hover:text-[color:var(--brick)]">Contact</a>
+    </p>
+
+    <div class="flex justify-center space-x-6 mt-6">
+      <a href="#" class="text-slate-500 hover:text-[color:var(--brick)] transition transform hover:scale-125 hover:drop-shadow-[0_0_10px_rgba(179,58,43,0.25)]">
+        <i data-lucide="instagram"></i>
+      </a>
+      <a href="#" class="text-slate-500 hover:text-[color:var(--brick)] transition transform hover:scale-125 hover:drop-shadow-[0_0_10px_rgba(179,58,43,0.25)]">
+        <i data-lucide="linkedin"></i>
+      </a>
+      <a href="#" class="text-slate-500 hover:text-[color:var(--brick)] transition transform hover:scale-125 hover:drop-shadow-[0_0_10px_rgba(179,58,43,0.25)]">
+        <i data-lucide="mail"></i>
+      </a>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    // Fade-up
+    const fadeEls = document.querySelectorAll('.fade-up');
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.2 });
+    fadeEls.forEach(el => obs.observe(el));
+
+    // Barre de chargement disparaît
+    window.addEventListener("load", () => {
+      const bar = document.querySelector(".progress-bar");
+      setTimeout(() => bar.style.display = "none", 4000);
+    });
+
+    // Ombre navbar au scroll
+    window.addEventListener("scroll", () => {
+      const header = document.querySelector("header");
+      if (window.scrollY > 50) header.classList.add("shadow-md");
+      else header.classList.remove("shadow-md");
+    });
+  </script>
+
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 1000,
+      once: true,
+      offset: 100,
+      easing: 'ease-in-out'
+    });
+  </script>
+  <script>
+    // Auto-hide flash messages after 2 seconds
+    document.addEventListener("DOMContentLoaded", () => {
+      const flashes = document.querySelectorAll(".flash");
+  
+      flashes.forEach(flash => {
+        setTimeout(() => {
+          flash.classList.add("hide");
+  
+          // Supprime complètement après l'animation
+          setTimeout(() => {
+            flash.remove();
+          }, 400);
+        }, 2000);
+      });
+    });
+  </script>
+  
+
+</body>
+</html>

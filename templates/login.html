@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Connexion / Inscription — LBG Santé Formation" />
+
+  <title>LBG Santé Formation — Connexion / Inscription</title>
+
+  <!-- Fonts & Tailwind -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root{
+      --navy: #1E2A5A;
+      --teal: #2D8C86;
+      --brick: #B33A2B;
+      --mustard: #D79A2B;
+      --ink: #0f172a;
+      --soft: #f6f8ff;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(45,140,134,0.18) 0%, rgba(255,255,255,1) 35%, rgba(246,248,255,1) 100%);
+      color: var(--ink);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* Barre de chargement */
+    .progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--brick), var(--mustard));
+      box-shadow: 0 0 10px rgba(179,58,43,0.35);
+      animation: load-bar 4s infinite;
+      z-index: 60;
+    }
+    @keyframes load-bar {
+      0% { width: 0%; }
+      50% { width: 80%; }
+      100% { width: 100%; }
+    }
+
+    /* Liens glow */
+    .nav-link-glow {
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--brick), var(--mustard), var(--teal), var(--brick));
+      background-size: 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: glow-shift 3s linear infinite;
+      transition: transform 0.3s ease;
+    }
+    .nav-link-glow:hover { transform: scale(1.06); }
+    @keyframes glow-shift {
+      0% { background-position: 0%; }
+      100% { background-position: 300%; }
+    }
+
+    /* Bouton UNIQUE = style "Nous contacter" */
+    .btn-cta{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+
+      font-weight: 800;
+      font-size: 0.875rem;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+
+      background: var(--brick);
+      color: #fff;
+
+      transition: transform .2s ease, filter .2s ease, opacity .2s ease;
+      border: none;
+    }
+    .btn-cta:hover{
+      transform: scale(1.03);
+      filter: drop-shadow(0 0 10px rgba(179,58,43,0.25));
+      opacity: .98;
+    }
+    .btn-cta:active{ transform: scale(1.01); }
+
+    .btn-cta.md{
+      font-size: 1rem;
+      padding: 0.75rem 1.5rem;
+    }
+
+    /* Bouton secondaire (outline) dans le même style */
+    .btn-outline{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+
+      font-weight: 800;
+      font-size: 0.875rem;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+
+      background: rgba(255,255,255,0.75);
+      color: var(--brick);
+      border: 2px solid rgba(179,58,43,0.35);
+
+      transition: transform .2s ease, border-color .2s ease, filter .2s ease;
+    }
+    .btn-outline:hover{
+      transform: scale(1.03);
+      border-color: rgba(179,58,43,0.60);
+      filter: drop-shadow(0 0 10px rgba(179,58,43,0.12));
+    }
+
+    /* Carte / glass */
+    .card {
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(30,42,90,0.12);
+      border-radius: 1rem;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 12px 40px rgba(15,23,42,0.08);
+    }
+
+    /* Champs */
+    .field{
+      width: 100%;
+      background: rgba(255,255,255,0.90);
+      border: 1px solid rgba(30,42,90,0.14);
+      border-radius: 0.75rem;
+      padding: 0.85rem 0.95rem;
+      outline: none;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    .field:focus{
+      border-color: rgba(45,140,134,0.45);
+      box-shadow: 0 0 0 4px rgba(45,140,134,0.12);
+    }
+
+    /* Tabs */
+    .tabs-wrap{
+      background: rgba(30,42,90,0.05);
+      border: 1px solid rgba(30,42,90,0.10);
+      border-radius: 0.9rem;
+      padding: 0.35rem;
+      display: inline-flex;
+      gap: 0.35rem;
+    }
+    .tab{
+      border-radius: 0.75rem;
+      padding: 0.6rem 1rem;
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: rgba(30,42,90,0.70);
+      cursor: pointer;
+      transition: background .2s ease, color .2s ease, transform .2s ease;
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .tab:hover{ transform: translateY(-1px); }
+    .tab.active{
+      background: rgba(255,255,255,0.90);
+      color: var(--navy);
+      border: 1px solid rgba(30,42,90,0.12);
+      box-shadow: 0 8px 24px rgba(15,23,42,0.06);
+    }
+
+    /* Layout auth */
+    .auth-hero{
+      min-height: 100vh;
+      padding-top: 6.5rem; /* compense header fixed */
+      padding-bottom: 4rem;
+      display: grid;
+      place-items: center;
+    }
+
+    .auth-grid{
+      width: min(1060px, 92vw);
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 2rem;
+      align-items: stretch;
+    }
+
+    .auth-side{
+      position: relative;
+      border-radius: 1.25rem;
+      overflow: hidden;
+      border: 1px solid rgba(30,42,90,0.12);
+      background:
+        linear-gradient(rgba(255,255,255,0.82), rgba(255,255,255,0.92)),
+        url("https://images.unsplash.com/photo-1554284126-aa88f22d8b74?auto=format&fit=crop&w=1400&q=80")
+        center/cover no-repeat;
+    }
+
+    .auth-side::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: radial-gradient(circle at 30% 20%, rgba(45,140,134,0.18), transparent 55%);
+      pointer-events:none;
+    }
+
+    .auth-side-inner{
+      position: relative;
+      height: 100%;
+      padding: 2.2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+
+    .bullet{
+      display:flex;
+      gap:.75rem;
+      align-items:flex-start;
+      color: rgba(15,23,42,0.78);
+      font-size: 0.95rem;
+    }
+    .bullet i{ margin-top: 2px; }
+
+    /* ===== FLASH MESSAGES ===== */
+    .flash-wrap{
+        margin-top: 1.5rem;
+        display: grid;
+        gap: .75rem;
+    }
+    
+    .flash{
+        display:flex;
+        align-items:flex-start;
+        gap:.6rem;
+    
+        padding: .9rem 1.1rem;
+        border-radius: .75rem;
+    
+        font-size: .875rem;
+        font-weight: 600;
+    
+        background: rgba(255,255,255,0.95);
+        border: 1px solid rgba(15,23,42,0.12);
+        box-shadow: 0 8px 20px rgba(15,23,42,0.08);
+    }
+    
+    /* Variantes */
+    .flash.success{
+        border-color: rgba(34,197,94,.35);
+        color: #166534;
+    }
+    
+    .flash.error{
+        border-color: rgba(239,68,68,.35);
+        color: #7f1d1d;
+    }
+    
+    .flash.warning{
+        border-color: rgba(245,158,11,.45);
+        color: #78350f;
+    }
+    
+    .flash.info{
+        border-color: rgba(59,130,246,.35);
+        color: #1e3a8a;
+    }
+
+    /* Animation disparition flash */
+    .flash{
+        animation: flash-in .4s ease-out forwards;
+    }
+    
+    @keyframes flash-in{
+        from{
+        opacity: 0;
+        transform: translateY(-8px);
+        }
+        to{
+        opacity: 1;
+        transform: translateY(0);
+        }
+    }
+    
+    .flash.hide{
+        animation: flash-out .4s ease-in forwards;
+    }
+    
+    @keyframes flash-out{
+        from{
+        opacity: 1;
+        transform: translateY(0);
+        }
+        to{
+        opacity: 0;
+        transform: translateY(-8px);
+        }
+    }
+  
+  
+    /* Responsive simple */
+    @media (max-width: 980px){
+      .auth-grid{ grid-template-columns: 1fr; }
+      .auth-side{ min-height: 240px; }
+    }
+  </style>
+</head>
+
+<body class="text-slate-900">
+
+  <div class="progress-bar"></div>
+
+  <!-- ===== NAVBAR (même style que ta page d'accueil) ===== -->
+  <header class="fixed top-0 w-full z-40 bg-white/75 backdrop-blur-md border-b border-slate-200">
+    <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+
+      <!-- Logo -->
+      <a href="{{ url_for('home') }}" class="flex items-center gap-3">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="LBG Santé Formation" class="h-10 w-auto">
+        <div class="text-left">
+          <h1 class="text-xl font-orbitron font-black tracking-wide text-[color:var(--navy)]">
+            LBG <span class="nav-link-glow">Santé Formation</span>
+          </h1>
+          <p class="text-xs font-semibold text-slate-500 -mt-1">Prévention • Mouvement • Santé durable</p>
+        </div>
+      </a>
+
+      <!-- Navigation -->
+      <nav class="hidden md:flex space-x-6 text-sm font-semibold items-center text-slate-600">
+        <a href="{{ url_for('home') }}" class="hover:text-[color:var(--teal)] transition">Accueil</a>
+        <a href="{{ url_for('about') }}" class="hover:text-[color:var(--teal)] transition">À propos</a>
+        <a href="{{ url_for('services') }}" class="hover:text-[color:var(--teal)] transition">Services</a>
+        <a href="{{ url_for('contact') }}" class="hover:text-[color:var(--teal)] transition">Contact</a>
+        <a href="{{ url_for('services') }}" class="nav-link-glow">Découvrir</a>
+      </nav>
+
+      <!-- CTA -->
+      <a href="{{ url_for('home') }}" class="btn-outline">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        Retour
+      </a>
+    </div>
+  </header>
+
+  <!-- ===== CONTENU ===== -->
+  <main class="auth-hero">
+    <div class="auth-grid">
+
+      <!-- Colonne gauche : info / branding -->
+      <section class="auth-side">
+        <div class="auth-side-inner">
+          <div>
+            <p class="text-xs uppercase font-extrabold tracking-widest text-[color:var(--brick)] mb-3">
+              Espace sécurisé
+            </p>
+
+            <h2 class="text-3xl md:text-4xl font-orbitron font-black text-[color:var(--navy)] leading-tight">
+              Bienvenue sur <span class="nav-link-glow">LBG Santé Formation</span>
+            </h2>
+
+            <p class="mt-4 text-slate-600 max-w-md">
+              Accédez à vos contenus, suivez vos formations, et gérez vos informations en toute simplicité.
+            </p>
+
+            <div class="mt-8 grid gap-4">
+              <div class="bullet">
+                <i data-lucide="shield-check" class="w-5 h-5" style="color: var(--teal)"></i>
+                <div><span class="font-semibold" style="color: var(--navy)">Accès sécurisé</span> — mot de passe chiffré et sessions protégées.</div>
+              </div>
+              <div class="bullet">
+                <i data-lucide="graduation-cap" class="w-5 h-5" style="color: var(--teal)"></i>
+                <div><span class="font-semibold" style="color: var(--navy)">Suivi des formations</span> — progression et ressources centralisées.</div>
+              </div>
+              <div class="bullet">
+                <i data-lucide="sparkles" class="w-5 h-5" style="color: var(--mustard)"></i>
+                <div><span class="font-semibold" style="color: var(--navy)">Expérience simple</span> — interface claire, rapide, professionnelle.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-xs text-slate-500">
+            © 2026 LBG Santé Formation — Prévention • Mouvement • Santé durable
+          </div>
+        </div>
+      </section>
+
+      <!-- Colonne droite : formulaire -->
+      <section class="card p-7 md:p-9">
+        <!-- Tabs -->
+        <div class="flex items-center justify-between gap-4 flex-wrap">
+          <div class="tabs-wrap" role="tablist" aria-label="Connexion / Inscription">
+            <button id="tab-login" class="tab active" type="button" role="tab" aria-selected="true">
+              <i data-lucide="log-in" class="w-4 h-4"></i>
+              Connexion
+            </button>
+            <button id="tab-register" class="tab" type="button" role="tab" aria-selected="false">
+              <i data-lucide="user-plus" class="w-4 h-4"></i>
+              Inscription
+            </button>
+          </div>
+
+          <p class="text-xs text-slate-500">
+            Besoin d’aide ? <a href="{{ url_for('contact') }}" class="font-semibold hover:text-[color:var(--brick)]">Contact</a>
+          </p>
+        </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-wrap mt-6 space-y-3">
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">
+                    <i data-lucide="
+                        {% if category == 'success' %}check-circle
+                        {% elif category == 'error' %}x-circle
+                        {% elif category == 'warning' %}alert-triangle
+                        {% else %}info{% endif %}
+                    " class="w-5 h-5"></i>
+                    <span>{{ message }}</span>
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+
+        <!-- Login form -->
+        <div id="panel-login" class="mt-7" role="tabpanel" aria-labelledby="tab-login">
+          <h3 class="text-xl font-orbitron font-black text-[color:var(--navy)]">Se connecter</h3>
+          <p class="text-slate-600 text-sm mt-2">Entrez vos informations pour accéder à votre espace.</p>
+
+          <!-- ✅ Mets ta route Flask ici -->
+          <form class="mt-6 space-y-4" method="POST" action="{{ url_for('login') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div>
+              <label class="text-sm font-semibold text-slate-700">Email</label>
+              <div class="mt-2 flex items-center gap-2">
+                <i data-lucide="mail" class="w-4 h-4 text-slate-400"></i>
+                <input class="field" type="email" name="email" placeholder="ex: nom@domaine.fr" required />
+              </div>
+            </div>
+
+            <div>
+              <label class="text-sm font-semibold text-slate-700">Mot de passe</label>
+              <div class="mt-2 flex items-center gap-2">
+                <i data-lucide="lock" class="w-4 h-4 text-slate-400"></i>
+                <input class="field" type="password" name="password" placeholder="••••••••" required />
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-3 flex-wrap">
+              <label class="inline-flex items-center gap-2 text-sm text-slate-600">
+                <input type="checkbox" name="remember" class="accent-[color:var(--teal)]">
+                Se souvenir de moi
+              </label>
+
+              <!-- ✅ Mets ta route Flask ici -->
+              <a href="{{ url_for('forgot_password') }}" class="text-sm font-semibold hover:text-[color:var(--brick)] text-slate-600">
+                Mot de passe oublié ?
+              </a>
+            </div>
+
+            <button class="btn-cta md w-full" type="submit">
+              <i data-lucide="log-in" class="w-5 h-5"></i>
+              Connexion
+            </button>
+
+            <div class="pt-2 text-center text-sm text-slate-600">
+              Pas de compte ?
+              <button type="button" id="to-register" class="font-extrabold hover:text-[color:var(--brick)]">
+                Créer un compte
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Register form -->
+        <div id="panel-register" class="mt-7 hidden" role="tabpanel" aria-labelledby="tab-register">
+          <h3 class="text-xl font-orbitron font-black text-[color:var(--navy)]">Créer un compte</h3>
+          <p class="text-slate-600 text-sm mt-2">Inscrivez-vous pour accéder aux formations et ressources.</p>
+
+          <!-- ✅ Mets ta route Flask ici -->
+          <form class="mt-6 space-y-4" method="POST" action="{{ url_for('register') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label class="text-sm font-semibold text-slate-700">Prénom</label>
+                <div class="mt-2 flex items-center gap-2">
+                  <i data-lucide="user" class="w-4 h-4 text-slate-400"></i>
+                  <input class="field" type="text" name="first_name" placeholder="Prénom" required />
+                </div>
+              </div>
+
+              <div>
+                <label class="text-sm font-semibold text-slate-700">Nom</label>
+                <div class="mt-2 flex items-center gap-2">
+                  <i data-lucide="user" class="w-4 h-4 text-slate-400"></i>
+                  <input class="field" type="text" name="last_name" placeholder="Nom" required />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label class="text-sm font-semibold text-slate-700">Email</label>
+              <div class="mt-2 flex items-center gap-2">
+                <i data-lucide="mail" class="w-4 h-4 text-slate-400"></i>
+                <input class="field" type="email" name="email" placeholder="ex: nom@domaine.fr" required />
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label class="text-sm font-semibold text-slate-700">Mot de passe</label>
+                <div class="mt-2 flex items-center gap-2">
+                  <i data-lucide="lock" class="w-4 h-4 text-slate-400"></i>
+                  <input class="field" type="password" name="password" placeholder="8 caractères min." minlength="8" required />
+                </div>
+              </div>
+
+              <div>
+                <label class="text-sm font-semibold text-slate-700">Confirmer</label>
+                <div class="mt-2 flex items-center gap-2">
+                  <i data-lucide="lock" class="w-4 h-4 text-slate-400"></i>
+                  <input class="field" type="password" name="confirm_password" placeholder="Répéter le mot de passe" minlength="8" required />
+                </div>
+              </div>
+            </div>
+
+            <label class="inline-flex items-start gap-2 text-sm text-slate-600">
+              <input type="checkbox" name="terms" class="mt-1 accent-[color:var(--teal)]" required>
+              <span>J’accepte les <a href="{{ url_for('terms') }}" class="font-semibold hover:text-[color:var(--brick)]">conditions</a> et la
+                <a href="{{ url_for('privacy') }}" class="font-semibold hover:text-[color:var(--brick)]">politique de confidentialité</a>.
+              </span>
+            </label>
+
+            <label class="inline-flex items-start gap-2 text-sm text-slate-600 mt-3">
+                <input
+                  type="checkbox"
+                  name="newsletter"
+                  class="mt-1 accent-[color:var(--teal)]"
+                >
+                <span>
+                  J’accepte de recevoir des emails d’information et la
+                  <strong>newsletter LBG Santé Formation</strong>.
+                </span>
+            </label>
+              
+
+            <button class="btn-cta md w-full" type="submit">
+              <i data-lucide="user-plus" class="w-5 h-5"></i>
+              Créer mon compte
+            </button>
+
+            <div class="pt-2 text-center text-sm text-slate-600">
+              Déjà un compte ?
+              <button type="button" id="to-login" class="font-extrabold hover:text-[color:var(--brick)]">
+                Me connecter
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="mt-8 text-xs text-slate-500 leading-relaxed">
+          En vous connectant, vous reconnaissez que l’accès à votre espace est personnel.
+          Pour toute question, contactez-nous.
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    lucide.createIcons();
+
+    // Tabs logic
+    const tabLogin = document.getElementById("tab-login");
+    const tabRegister = document.getElementById("tab-register");
+    const panelLogin = document.getElementById("panel-login");
+    const panelRegister = document.getElementById("panel-register");
+    const toRegister = document.getElementById("to-register");
+    const toLogin = document.getElementById("to-login");
+
+    function showLogin(){
+      tabLogin.classList.add("active");
+      tabRegister.classList.remove("active");
+      tabLogin.setAttribute("aria-selected", "true");
+      tabRegister.setAttribute("aria-selected", "false");
+
+      panelLogin.classList.remove("hidden");
+      panelRegister.classList.add("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function showRegister(){
+      tabRegister.classList.add("active");
+      tabLogin.classList.remove("active");
+      tabRegister.setAttribute("aria-selected", "true");
+      tabLogin.setAttribute("aria-selected", "false");
+
+      panelRegister.classList.remove("hidden");
+      panelLogin.classList.add("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    tabLogin.addEventListener("click", showLogin);
+    tabRegister.addEventListener("click", showRegister);
+    toRegister?.addEventListener("click", showRegister);
+    toLogin?.addEventListener("click", showLogin);
+
+    // Barre de chargement disparaît
+    window.addEventListener("load", () => {
+      const bar = document.querySelector(".progress-bar");
+      setTimeout(() => bar.style.display = "none", 1200);
+    });
+
+    
+  </script>
+  <script>
+    // Auto-hide flash messages after 2 seconds
+    document.addEventListener("DOMContentLoaded", () => {
+      const flashes = document.querySelectorAll(".flash");
+  
+      flashes.forEach(flash => {
+        setTimeout(() => {
+          flash.classList.add("hide");
+  
+          // Supprime complètement après l'animation
+          setTimeout(() => {
+            flash.remove();
+          }, 400);
+        }, 2000);
+      });
+    });
+  </script>
+  
+
+</body>
+</html>

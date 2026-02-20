@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Contact — LBG Santé Formation. Prenez rendez-vous ou partagez vos besoins." />
+  <meta property="og:title" content="Contact — LBG Santé Formation" />
+  <meta property="og:description" content="Prenez rendez-vous, demandez un devis, ou posez une question." />
+  <meta property="og:image" content="{{ url_for('static', filename='img/logo.png') }}" />
+  <meta property="og:type" content="website" />
+
+  <title>LBG Santé Formation — Contact</title>
+
+  <!-- Fonts & Tailwind -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- AOS -->
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+  <style>
+    :root{
+      --navy: #1E2A5A;
+      --teal: #2D8C86;
+      --brick: #B33A2B;
+      --mustard: #D79A2B;
+      --ink: #0f172a;
+      --soft: #f6f8ff;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(45,140,134,0.18) 0%, rgba(255,255,255,1) 35%, rgba(246,248,255,1) 100%);
+      color: var(--ink);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* Barre de chargement */
+    .progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--brick), var(--mustard));
+      box-shadow: 0 0 10px rgba(179,58,43,0.35);
+      animation: load-bar 4s infinite;
+      z-index: 60;
+    }
+    @keyframes load-bar {
+      0% { width: 0%; }
+      50% { width: 80%; }
+      100% { width: 100%; }
+    }
+
+    /* Liens glow */
+    .nav-link-glow {
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--brick), var(--mustard), var(--teal), var(--brick));
+      background-size: 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: glow-shift 3s linear infinite;
+      transition: transform 0.3s ease;
+    }
+    .nav-link-glow:hover { transform: scale(1.12); }
+    @keyframes glow-shift {
+      0% { background-position: 0%; }
+      100% { background-position: 300%; }
+    }
+
+    /* Bouton UNIQUE */
+    .btn-cta{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      font-weight: 800;
+      font-size: 0.875rem;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      background: var(--brick);
+      color: #fff;
+      transition: transform .2s ease, filter .2s ease;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-cta:hover{
+      transform: scale(1.05);
+      filter: drop-shadow(0 0 10px rgba(179,58,43,0.30));
+    }
+    .btn-cta.md{
+      font-size: 1rem;
+      padding: 0.75rem 1.5rem;
+    }
+
+    /* Empêche le dégradé dans les boutons */
+    .btn-cta .nav-link-glow{
+      -webkit-text-fill-color: #fff !important;
+      background: none !important;
+      animation: none !important;
+      text-shadow: none !important;
+    }
+
+    /* Cards */
+    .card {
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(30,42,90,0.12);
+      border-radius: 1rem;
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 12px 40px rgba(15,23,42,0.07);
+    }
+    .card:hover {
+      transform: scale(1.02);
+      border-color: rgba(45,140,134,0.45);
+      box-shadow: 0 0 24px rgba(45,140,134,0.18);
+    }
+
+    /* Champs */
+    .field{
+      width: 100%;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(30,42,90,0.14);
+      border-radius: 0.75rem;
+      padding: 0.85rem 0.95rem;
+      outline: none;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    .field:focus{
+      border-color: rgba(45,140,134,0.45);
+      box-shadow: 0 0 0 4px rgba(45,140,134,0.12);
+    }
+
+    /* Section layout */
+    .page-hero{
+      padding-top: 7.5rem; /* compense header fixed */
+      padding-bottom: 4rem;
+    }
+
+    .section-divider{
+      height: 1px;
+      width: min(1100px, calc(100% - 3rem));
+      margin: 3rem auto 0;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(30,42,90,0.10),
+        rgba(45,140,134,0.12),
+        rgba(30,42,90,0.10),
+        transparent
+      );
+      opacity: 0.35;
+    }
+
+    /* ===== FLASH MESSAGES ===== */
+    .flash-wrap{
+      width: min(900px, 92vw);
+      margin: 1rem auto 0;
+      display: grid;
+      gap: .75rem;
+    }
+
+    .flash{
+      display:flex;
+      align-items:flex-start;
+      gap:.6rem;
+      padding: .9rem 1.1rem;
+      border-radius: .75rem;
+      font-size: .875rem;
+      font-weight: 600;
+      background: rgba(255,255,255,0.95);
+      border: 1px solid rgba(15,23,42,0.12);
+      box-shadow: 0 8px 20px rgba(15,23,42,0.08);
+      animation: flash-in .4s ease-out forwards;
+    }
+
+    .flash.success{ border-color: rgba(34,197,94,.35); color: #166534; }
+    .flash.error{ border-color: rgba(239,68,68,.35); color: #7f1d1d; }
+    .flash.warning{ border-color: rgba(245,158,11,.45); color: #78350f; }
+    .flash.info{ border-color: rgba(59,130,246,.35); color: #1e3a8a; }
+
+    @keyframes flash-in{
+      from{ opacity: 0; transform: translateY(-8px); }
+      to{ opacity: 1; transform: translateY(0); }
+    }
+    .flash.hide{ animation: flash-out .4s ease-in forwards; }
+    @keyframes flash-out{
+      from{ opacity: 1; transform: translateY(0); }
+      to{ opacity: 0; transform: translateY(-8px); }
+    }
+
+    /* Footer */
+    footer a:hover{
+      filter: drop-shadow(0 0 10px rgba(179,58,43,0.18));
+    }
+  </style>
+</head>
+
+<body class="text-slate-900">
+
+  <div class="progress-bar"></div>
+
+  <!-- ===== NAVBAR ===== -->
+  <header class="fixed top-0 w-full z-40 bg-white/75 backdrop-blur-md border-b border-slate-200">
+    <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+
+      <!-- Logo -->
+      <a href="{{ url_for('home') }}" class="flex items-center gap-3">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="LBG Santé Formation" class="h-10 w-auto">
+        <div class="text-left">
+          <h1 class="text-xl font-orbitron font-black tracking-wide text-[color:var(--navy)]">
+            LBG <span class="nav-link-glow">Santé Formation</span>
+          </h1>
+          <p class="text-xs font-semibold text-slate-500 -mt-1">Prévention • Mouvement • Santé durable</p>
+        </div>
+      </a>
+
+      <!-- Navigation -->
+      <nav class="flex space-x-6 text-sm font-semibold items-center text-slate-600">
+        <a href="{{ url_for('home') }}" class="hover:text-[color:var(--teal)] transition">Accueil</a>
+        <a href="{{ url_for('about') }}" class="hover:text-[color:var(--teal)] transition">À propos</a>
+        <a href="{{ url_for('services') }}" class="hover:text-[color:var(--teal)] transition">Services</a>
+        <a href="{{ url_for('contact') }}" class="text-[color:var(--navy)] font-extrabold">Contact</a>
+        <a href="{{ url_for('services') }}" class="nav-link-glow">Découvrir</a>
+      </nav>
+
+      <!-- CTA -->
+      {% if current_user.is_authenticated %}
+        <a href="{{ url_for('logout') }}" class="btn-cta">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
+          Déconnexion
+        </a>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="btn-cta">
+          <i data-lucide="log-in" class="w-4 h-4"></i>
+          Connexion
+        </a>
+      {% endif %}
+    </div>
+  </header>
+
+  <!-- Flash messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-wrap">
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">
+            <i data-lucide="
+              {% if category == 'success' %}check-circle
+              {% elif category == 'error' %}x-circle
+              {% elif category == 'warning' %}alert-triangle
+              {% else %}info{% endif %}
+            " class="w-5 h-5"></i>
+            <span>{{ message }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- ===== CONTENU ===== -->
+  <main class="page-hero">
+    <div class="max-w-6xl mx-auto px-6">
+
+      <!-- Titre -->
+      <section class="text-center" data-aos="zoom-in" data-aos-duration="1000">
+        <p class="mb-3 tracking-widest text-xs sm:text-sm uppercase font-bold text-[color:var(--brick)]">
+          <span class="nav-link-glow">Contact • Rendez-vous • Devis</span>
+        </p>
+
+        <h2 class="text-3xl sm:text-5xl font-orbitron font-black mb-4 text-[color:var(--navy)] leading-tight">
+          Parlons de votre <span class="nav-link-glow">besoin</span>
+        </h2>
+
+        <p class="text-slate-600 max-w-2xl mx-auto">
+          Vous souhaitez organiser une formation, mettre en place une action prévention, ou simplement poser une question ?
+          Décrivez votre contexte : on vous répond rapidement avec une proposition claire (rendez-vous, devis, ou plan d’action).
+        </p>
+      </section>
+
+      <div class="section-divider"></div>
+
+      <!-- Grille -->
+      <section class="mt-10 grid lg:grid-cols-3 gap-8" data-aos="fade-up">
+        <!-- Formulaire -->
+        <div class="lg:col-span-2 card p-7 md:p-9">
+          <div class="flex items-start justify-between gap-4 flex-wrap">
+            <div>
+              <h3 class="text-xl md:text-2xl font-orbitron font-black text-[color:var(--navy)]">
+                Envoyer un message
+              </h3>
+              <p class="text-slate-600 text-sm mt-2">
+                Réponse sous 24–48h (jours ouvrés). Plus vous êtes précis, plus la réponse est rapide.
+              </p>
+            </div>
+
+            <div class="text-xs text-slate-500 flex items-center gap-2">
+              <i data-lucide="shield-check" class="w-4 h-4" style="color: var(--teal)"></i>
+              Données traitées avec discrétion
+            </div>
+          </div>
+
+          <!-- IMPORTANT :
+               Ici on met une action "safe" même si tu n'as pas encore la route.
+               Quand tu auras la route POST /contact, remplace par url_for('contact_send') par exemple.
+          -->
+          <form class="mt-7 space-y-4" method="POST" action="#">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label class="text-sm font-semibold text-slate-700">Nom</label>
+                <div class="mt-2 flex items-center gap-2">
+                  <i data-lucide="user" class="w-4 h-4 text-slate-400"></i>
+                  <input class="field" type="text" name="name" placeholder="Votre nom" required>
+                </div>
+              </div>
+
+              <div>
+                <label class="text-sm font-semibold text-slate-700">Email</label>
+                <div class="mt-2 flex items-center gap-2">
+                  <i data-lucide="mail" class="w-4 h-4 text-slate-400"></i>
+                  <input class="field" type="email" name="email" placeholder="ex: nom@domaine.fr" required>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label class="text-sm font-semibold text-slate-700">Téléphone (optionnel)</label>
+                <div class="mt-2 flex items-center gap-2">
+                  <i data-lucide="phone" class="w-4 h-4 text-slate-400"></i>
+                  <input class="field" type="tel" name="phone" placeholder="+213 ...">
+                </div>
+              </div>
+
+              <div>
+                <label class="text-sm font-semibold text-slate-700">Sujet</label>
+                <div class="mt-2 flex items-center gap-2">
+                  <i data-lucide="clipboard" class="w-4 h-4 text-slate-400"></i>
+                  <select class="field" name="subject" id="subject-select" required>
+                    <option value="" selected disabled>Choisir…</option>
+                  
+                    <option value="rendezvous">Demande de rendez-vous</option>
+                    <option value="devis">Demande de devis</option>
+                    <option value="formation">Question sur une formation</option>
+                    <option value="prevention">Prévention / accompagnement terrain</option>
+                    <option value="autre">Autre</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label class="text-sm font-semibold text-slate-700">Message</label>
+              <div class="mt-2 flex items-start gap-2">
+                <i data-lucide="message-square" class="w-4 h-4 text-slate-400 mt-3"></i>
+                <textarea class="field" name="message" rows="6" placeholder="Contexte, objectifs, contraintes, délais…"
+                  required></textarea>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-4 flex-wrap pt-2">
+              <p class="text-xs text-slate-500">
+                En envoyant ce formulaire, vous acceptez d’être recontacté(e) au sujet de votre demande.
+              </p>
+              <!-- Honeypot anti-spam (doit rester vide) -->
+            <div style="position:absolute; left:-10000px; top:auto; width:1px; height:1px; overflow:hidden;">
+                <label>Website</label>
+                <input type="text" name="website" tabindex="-1" autocomplete="off">
+            </div>
+  
+              <button class="btn-cta md" type="submit">
+                <i data-lucide="send" class="w-5 h-5"></i>
+                Envoyer
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Infos -->
+        <aside class="card p-7 md:p-9" data-aos="fade-up" data-aos-delay="150">
+          <h3 class="text-xl font-orbitron font-black text-[color:var(--navy)]">
+            Informations
+          </h3>
+          <p class="text-slate-600 text-sm mt-2">
+            Pour un rendez-vous, indiquez vos disponibilités et votre contexte (métier, équipe, contraintes).
+          </p>
+
+          <div class="mt-6 grid gap-4 text-sm">
+            <div class="flex gap-3">
+              <i data-lucide="mail" class="w-5 h-5" style="color: var(--teal)"></i>
+              <div>
+                <div class="font-semibold text-[color:var(--navy)]">Email</div>
+                <div class="text-slate-600">contact@lbg-sante-formation.fr</div>
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <i data-lucide="phone" class="w-5 h-5" style="color: var(--teal)"></i>
+              <div>
+                <div class="font-semibold text-[color:var(--navy)]">Téléphone</div>
+                <div class="text-slate-600">+33 6 00 00 00 00</div>
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <i data-lucide="map-pin" class="w-5 h-5" style="color: var(--mustard)"></i>
+              <div>
+                <div class="font-semibold text-[color:var(--navy)]">Zone d’intervention</div>
+                <div class="text-slate-600">Sur site • France / International (selon projet)</div>
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <i data-lucide="clock" class="w-5 h-5" style="color: var(--mustard)"></i>
+              <div>
+                <div class="font-semibold text-[color:var(--navy)]">Horaires</div>
+                <div class="text-slate-600">Lun–Ven • 9h–18h</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8 p-4 rounded-xl border border-slate-200 bg-white/70">
+            <div class="flex items-start gap-3">
+              <i data-lucide="calendar" class="w-5 h-5" style="color: var(--brick)"></i>
+              <div>
+                <div class="font-extrabold text-[color:var(--navy)]">Prendre rendez-vous</div>
+                <p class="text-slate-600 text-sm mt-1">
+                  Dites-nous votre objectif (prévention, formation, routine mouvement),
+                  et on vous propose un créneau + une trame de travail.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6">
+            <a href="{{ url_for('about') }}" class="btn-cta w-full">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              Voir les services
+            </a>
+          </div>
+        </aside>
+      </section>
+    </div>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="bg-white/70 border-t border-slate-200 py-10 text-center" data-aos="fade-up">
+    <h1 class="text-2xl font-orbitron font-black mb-2 text-[color:var(--navy)] transition">
+      LBG <span class="nav-link-glow">Santé</span> Formation
+    </h1>
+
+    <p class="text-slate-500 text-sm mt-4">
+      © 2026 LBG Santé Formation —
+      <a href="{{ url_for('contact') }}" class="underline font-semibold hover:text-[color:var(--brick)]">Contact</a>
+    </p>
+
+    <div class="flex justify-center space-x-6 mt-6">
+      <a href="#" class="text-slate-500 hover:text-[color:var(--brick)] transition transform hover:scale-125 hover:drop-shadow-[0_0_10px_rgba(179,58,43,0.25)]">
+        <i data-lucide="instagram"></i>
+      </a>
+      <a href="#" class="text-slate-500 hover:text-[color:var(--brick)] transition transform hover:scale-125 hover:drop-shadow-[0_0_10px_rgba(179,58,43,0.25)]">
+        <i data-lucide="linkedin"></i>
+      </a>
+      <a href="#" class="text-slate-500 hover:text-[color:var(--brick)] transition transform hover:scale-125 hover:drop-shadow-[0_0_10px_rgba(179,58,43,0.25)]">
+        <i data-lucide="mail"></i>
+      </a>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    // Barre de chargement disparaît
+    window.addEventListener("load", () => {
+      const bar = document.querySelector(".progress-bar");
+      setTimeout(() => bar.style.display = "none", 1200);
+    });
+
+    // Ombre navbar au scroll
+    window.addEventListener("scroll", () => {
+      const header = document.querySelector("header");
+      if (window.scrollY > 50) header.classList.add("shadow-md");
+      else header.classList.remove("shadow-md");
+    });
+
+    // Auto-hide flash messages after 2 seconds
+    document.addEventListener("DOMContentLoaded", () => {
+      const flashes = document.querySelectorAll(".flash");
+      flashes.forEach(flash => {
+        setTimeout(() => {
+          flash.classList.add("hide");
+          setTimeout(() => flash.remove(), 400);
+        }, 2000);
+      });
+    });
+  </script>
+
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 1000,
+      once: true,
+      offset: 100,
+      easing: 'ease-in-out'
+    });
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const subject = params.get("subject"); // ex: devis ou rendezvous
+  
+      if(subject){
+        const select = document.getElementById("subject-select");
+        if(select){
+          // si la valeur existe dans les options, elle sera sélectionnée
+          select.value = subject;
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>

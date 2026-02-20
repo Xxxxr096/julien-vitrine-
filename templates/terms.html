@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Conditions générales — LBG Santé Formation</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body{
+      font-family:Poppins, sans-serif;
+      background: radial-gradient(circle at top, rgba(45,140,134,.15), #fff 40%);
+      color:#0f172a;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen">
+
+<header class="border-b bg-white/80 backdrop-blur">
+  <div class="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
+    <h1 class="font-orbitron font-black text-xl text-[#1E2A5A]">
+      LBG <span class="text-[#B33A2B]">Santé Formation</span>
+    </h1>
+    <a href="{{ url_for('home') }}" class="font-semibold text-slate-600 hover:text-[#B33A2B]">
+      Retour à l’accueil
+    </a>
+  </div>
+</header>
+
+<main class="max-w-4xl mx-auto px-6 py-16 space-y-10">
+
+  <h2 class="text-3xl font-orbitron font-black text-[#1E2A5A]">
+    Conditions générales d’utilisation
+  </h2>
+
+  <section class="space-y-4">
+    <h3 class="font-semibold text-lg">1. Objet</h3>
+    <p>
+      Les présentes conditions régissent l’accès et l’utilisation du site
+      <strong>LBG Santé Formation</strong>.
+    </p>
+  </section>
+
+  <section class="space-y-4">
+    <h3 class="font-semibold text-lg">2. Accès au service</h3>
+    <p>
+      L’accès à certains contenus nécessite la création d’un compte utilisateur.
+      L’utilisateur s’engage à fournir des informations exactes.
+    </p>
+  </section>
+
+  <section class="space-y-4">
+    <h3 class="font-semibold text-lg">3. Responsabilité</h3>
+    <p>
+      LBG Santé Formation ne pourra être tenue responsable d’une mauvaise utilisation
+      des contenus proposés.
+    </p>
+  </section>
+
+  <section class="space-y-4">
+    <h3 class="font-semibold text-lg">4. Propriété intellectuelle</h3>
+    <p>
+      L’ensemble des contenus (textes, visuels, formations) est protégé.
+      Toute reproduction est interdite sans autorisation.
+    </p>
+  </section>
+
+</main>
+
+<footer class="border-t text-center text-sm text-slate-500 py-6">
+  © 2026 LBG Santé Formation — Tous droits réservés
+</footer>
+
+</body>
+</html>

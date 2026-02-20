@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Politique de confidentialité — LBG Santé Formation</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Orbitron:wght@700;900&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+      body {
+        font-family: Poppins, sans-serif;
+        background: radial-gradient(
+          circle at top,
+          rgba(45, 140, 134, 0.15),
+          #fff 40%
+        );
+        color: #0f172a;
+      }
+    </style>
+  </head>
+
+  <body class="min-h-screen">
+    <header class="border-b bg-white/80 backdrop-blur">
+      <div
+        class="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center"
+      >
+        <h1 class="font-orbitron font-black text-xl text-[#1E2A5A]">
+          LBG <span class="text-[#B33A2B]">Santé Formation</span>
+        </h1>
+        <a
+          href="{{ url_for('home') }}"
+          class="font-semibold text-slate-600 hover:text-[#B33A2B]"
+        >
+          Retour à l’accueil
+        </a>
+      </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-6 py-16 space-y-10">
+      <h2 class="text-3xl font-orbitron font-black text-[#1E2A5A]">
+        Politique de confidentialité
+      </h2>
+
+      <section class="space-y-4">
+        <h3 class="font-semibold text-lg">1. Données collectées</h3>
+        <p>
+          Nous collectons les informations nécessaires à la création de compte :
+          nom, prénom, email et préférences (newsletter).
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="font-semibold text-lg">2. Utilisation des données</h3>
+        <p>
+          Les données sont utilisées uniquement dans le cadre des services
+          proposés par LBG Santé Formation.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="font-semibold text-lg">3. Newsletter</h3>
+        <p>
+          L’inscription à la newsletter est facultative et peut être retirée à
+          tout moment depuis votre compte ou par simple demande.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="font-semibold text-lg">4. Sécurité</h3>
+        <p>
+          Les mots de passe sont chiffrés et aucune donnée sensible n’est
+          partagée avec des tiers.
+        </p>
+      </section>
+    </main>
+
+    <footer class="border-t text-center text-sm text-slate-500 py-6">
+      © 2026 LBG Santé Formation — Données protégées
+    </footer>
+  </body>
+</html>
