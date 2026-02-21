@@ -1,0 +1,78 @@
+{% extends "admin/base.html" %} {% set active = "articles" %} {% block content
+%}
+
+<div class="card p-7">
+  <div class="flex items-start justify-between gap-4 flex-wrap">
+    <div>
+      <h2 class="font-orbitron font-black text-2xl text-[color:var(--navy)]">
+        Ajouter un article
+      </h2>
+      <p class="text-slate-600 text-sm mt-1">
+        Contenu HTML pour l’instant (on pourra passer en Markdown après).
+      </p>
+    </div>
+    <a class="btn-ghost" href="{{ url_for('admin_articles') }}">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i> Retour
+    </a>
+  </div>
+
+  <form class="mt-6 space-y-4" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+    <div>
+      <label class="text-sm font-semibold text-slate-700">Titre</label>
+      <input class="field mt-2" name="title" required />
+    </div>
+
+    <div>
+      <label class="text-sm font-semibold text-slate-700"
+        >Slug (unique, ex: exercice-lombalgie)</label
+      >
+      <input class="field mt-2" name="slug" required />
+    </div>
+
+    <div>
+      <label class="text-sm font-semibold text-slate-700"
+        >Image de couverture (URL)</label
+      >
+      <input class="field mt-2" name="cover_image" placeholder="https://..." />
+    </div>
+
+    <div>
+      <label class="text-sm font-semibold text-slate-700"
+        >Aperçu (excerpt)</label
+      >
+      <textarea class="field mt-2" name="excerpt" rows="3" required></textarea>
+    </div>
+
+    <div>
+      <label class="text-sm font-semibold text-slate-700">Contenu HTML</label>
+      <textarea
+        class="field mt-2"
+        name="content_html"
+        rows="12"
+        required
+      ></textarea>
+      <p class="text-xs text-slate-500 mt-2">
+        Exemple: &lt;h3&gt;Titre&lt;/h3&gt; &lt;p&gt;Paragraphe&lt;/p&gt;
+        &lt;ul&gt;...&lt;/ul&gt;
+      </p>
+    </div>
+
+    <label class="inline-flex items-center gap-2 text-sm text-slate-600">
+      <input
+        type="checkbox"
+        name="published"
+        class="accent-[color:var(--teal)]"
+        checked
+      />
+      Publier immédiatement
+    </label>
+
+    <button class="btn-cta alt" type="submit">
+      <i data-lucide="save" class="w-4 h-4"></i> Enregistrer
+    </button>
+  </form>
+</div>
+
+{% endblock %}

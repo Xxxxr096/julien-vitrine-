@@ -1,0 +1,106 @@
+{% extends "admin/base.html" %} {% set active = "admins" %} {% block content %}
+
+<div class="grid lg:grid-cols-3 gap-6">
+  <div class="lg:col-span-2 card p-7">
+    <h2 class="font-orbitron font-black text-2xl text-[color:var(--navy)]">
+      Admins
+    </h2>
+    <p class="text-slate-600 text-sm mt-1">
+      Gestion des comptes administrateurs.
+    </p>
+    <div class="flex gap-3 flex-wrap mt-4">
+      <div class="px-4 py-2 rounded-xl border border-slate-200 bg-white/70">
+        <div class="text-xs text-slate-500 font-semibold">Total admins</div>
+        <div class="text-lg font-extrabold text-[color:var(--navy)]">
+          {{ admins_count }}
+        </div>
+      </div>
+
+      <div class="px-4 py-2 rounded-xl border border-slate-200 bg-white/70">
+        <div class="text-xs text-slate-500 font-semibold">
+          Doivent changer mdp
+        </div>
+        <div class="text-lg font-extrabold" style="color: var(--brick)">
+          {{ must_change_count }}
+        </div>
+      </div>
+    </div>
+    <div class="mt-6 overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="text-slate-500">
+          <tr>
+            <th class="text-left py-3">Nom</th>
+            <th class="text-left py-3">Email</th>
+            <th class="text-left py-3">Obligation changer mdp</th>
+            <th class="text-left py-3">Créé le</th>
+          </tr>
+        </thead>
+        <tbody class="text-slate-700">
+          {% for a in admins %}
+          <tr class="border-t border-slate-200/70">
+            <td class="py-3 font-extrabold text-[color:var(--navy)]">
+              {{ a.first_name }} {{ a.last_name }}
+            </td>
+            <td class="py-3">{{ a.email }}</td>
+            <td class="py-3">
+              {% if a.must_change_password %}
+              <span style="color: var(--brick); font-weight: 900">Oui</span>
+              {% else %}
+              <span style="color: var(--teal); font-weight: 900">Non</span>
+              {% endif %}
+            </td>
+            <td class="py-3 text-slate-500">
+              {{ a.created_at.strftime("%d/%m/%Y") if a.created_at else "" }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card p-7">
+    <h3 class="font-orbitron font-black text-xl text-[color:var(--navy)]">
+      Inviter un admin
+    </h3>
+    <p class="text-slate-600 text-sm mt-1">
+      Création + envoi email avec mot de passe temporaire et lien de changement.
+    </p>
+
+    <form class="mt-5 space-y-3" method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+      <div>
+        <label class="text-sm font-semibold text-slate-700">Prénom</label>
+        <input class="field mt-2" name="first_name" placeholder="Ex: Sarah" />
+      </div>
+
+      <div>
+        <label class="text-sm font-semibold text-slate-700">Nom</label>
+        <input class="field mt-2" name="last_name" placeholder="Ex: Dupont" />
+      </div>
+
+      <div>
+        <label class="text-sm font-semibold text-slate-700">Email</label>
+        <input
+          class="field mt-2"
+          name="email"
+          type="email"
+          placeholder="admin@domaine.fr"
+          required
+        />
+      </div>
+
+      <button class="btn-cta alt w-full" type="submit">
+        <i data-lucide="send" class="w-4 h-4"></i>
+        Envoyer l’invitation
+      </button>
+
+      <div class="text-xs text-slate-500 leading-relaxed">
+        Le nouvel admin devra définir un nouveau mot de passe immédiatement.
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

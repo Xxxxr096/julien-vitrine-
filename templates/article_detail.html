@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ article.title }} — LBG Santé Formation</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Orbitron:wght@700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='img/logo.png') }}"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+      :root {
+        --navy: #1e2a5a;
+        --teal: #2d8c86;
+        --brick: #b33a2b;
+        --mustard: #d79a2b;
+        --ink: #0f172a;
+      }
+      body {
+        font-family: "Poppins", sans-serif;
+        background: radial-gradient(
+          circle at top,
+          rgba(45, 140, 134, 0.18) 0%,
+          rgba(255, 255, 255, 1) 35%,
+          rgba(246, 248, 255, 1) 100%
+        );
+        color: var(--ink);
+        min-height: 100vh;
+      }
+      .nav-link-glow {
+        font-weight: 800;
+        background: linear-gradient(
+          90deg,
+          var(--brick),
+          var(--mustard),
+          var(--teal),
+          var(--brick)
+        );
+        background-size: 300%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: glow-shift 3s linear infinite;
+      }
+      @keyframes glow-shift {
+        0% {
+          background-position: 0%;
+        }
+        100% {
+          background-position: 300%;
+        }
+      }
+      .btn-cta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-weight: 800;
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        background: var(--brick);
+        color: #fff;
+        border: none;
+        transition: transform 0.2s ease, filter 0.2s ease;
+      }
+      .btn-cta:hover {
+        transform: scale(1.05);
+        filter: drop-shadow(0 0 10px rgba(179, 58, 43, 0.3));
+      }
+      .btn-cta.alt {
+        background: var(--teal);
+      }
+      .card {
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(30, 42, 90, 0.12);
+        border-radius: 1rem;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 12px 40px rgba(15, 23, 42, 0.07);
+        overflow: hidden;
+      }
+      .page {
+        padding-top: 7.25rem;
+        padding-bottom: 4rem;
+      }
+      .title {
+        font-family: "Orbitron", sans-serif;
+        font-weight: 900;
+        color: var(--navy);
+        line-height: 1.05;
+      }
+      .prose p {
+        margin-top: 0.9rem;
+        color: rgba(15, 23, 42, 0.78);
+        line-height: 1.8;
+      }
+      .prose h3 {
+        margin-top: 1.4rem;
+        font-weight: 900;
+        color: var(--navy);
+      }
+      .prose ul {
+        margin-top: 0.6rem;
+        padding-left: 1.2rem;
+        list-style: disc;
+        color: rgba(15, 23, 42, 0.78);
+      }
+    </style>
+  </head>
+
+  <body>
+    <header
+      class="fixed top-0 w-full z-40 bg-white/75 backdrop-blur-md border-b border-slate-200"
+    >
+      <div
+        class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4"
+      >
+        <a href="{{ url_for('home') }}" class="flex items-center gap-3">
+          <img
+            src="{{ url_for('static', filename='img/logo.png') }}"
+            class="h-10 w-auto"
+            alt="LBG"
+          />
+          <div>
+            <h1
+              class="text-xl font-orbitron font-black tracking-wide text-[color:var(--navy)]"
+            >
+              LBG <span class="nav-link-glow">Santé Formation</span>
+            </h1>
+            <p class="text-xs font-semibold text-slate-500 -mt-1">
+              Prévention • Mouvement • Santé durable
+            </p>
+          </div>
+        </a>
+
+        <nav
+          class="flex space-x-6 text-sm font-semibold items-center text-slate-600"
+        >
+          <a
+            href="{{ url_for('articles') }}"
+            class="hover:text-[color:var(--teal)] transition"
+            >← Articles</a
+          >
+          <a
+            href="{{ url_for('contact') }}"
+            class="hover:text-[color:var(--teal)] transition"
+            >Contact</a
+          >
+        </nav>
+
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('logout') }}" class="btn-cta"
+          ><i data-lucide="log-out" class="w-4 h-4"></i>Déconnexion</a
+        >
+        {% else %}
+        <a href="{{ url_for('login') }}" class="btn-cta"
+          ><i data-lucide="log-in" class="w-4 h-4"></i>Connexion</a
+        >
+        {% endif %}
+      </div>
+    </header>
+
+    <main class="page">
+      <div class="max-w-4xl mx-auto px-6">
+        <article class="card">
+          {% if article.cover_image %}
+          <img
+            src="{{ article.cover_image }}"
+            alt="{{ article.title }}"
+            class="w-full h-[280px] object-cover"
+          />
+          {% endif %}
+
+          <div class="p-7 md:p-10">
+            <h2 class="title text-3xl sm:text-5xl">{{ article.title }}</h2>
+            <p class="text-slate-500 text-sm mt-3">
+              Publié le {{ article.created_at.strftime("%d/%m/%Y") if
+              article.created_at else "" }}
+            </p>
+
+            <div class="mt-6">
+              {% if current_user.is_authenticated %}
+              <div class="prose">{{ article.content_html | safe }}</div>
+              {% else %}
+              <p class="text-slate-700 leading-relaxed">
+                {{ article.excerpt }}
+              </p>
+
+              <div
+                class="mt-7 p-5 rounded-xl border border-slate-200 bg-white/70"
+              >
+                <div class="flex items-start gap-3">
+                  <i
+                    data-lucide="lock"
+                    class="w-5 h-5"
+                    style="color: var(--brick)"
+                  ></i>
+                  <div>
+                    <div class="font-extrabold text-[color:var(--navy)]">
+                      Contenu réservé
+                    </div>
+                    <p class="text-slate-600 text-sm mt-1">
+                      Pour lire l’article complet (et accéder aux ressources),
+                      connectez-vous ou créez un compte.
+                    </p>
+                    <div class="mt-4 flex gap-2 flex-wrap">
+                      <a
+                        class="btn-cta"
+                        href="{{ url_for('login', next=url_for('article_detail', slug=article.slug)) }}"
+                      >
+                        <i data-lucide="log-in" class="w-4 h-4"></i> Connexion
+                      </a>
+                      <a
+                        class="btn-cta alt"
+                        href="{{ url_for('login', next=url_for('article_detail', slug=article.slug)) }}#register"
+                      >
+                        <i data-lucide="user-plus" class="w-4 h-4"></i>
+                        Inscription
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </article>
+      </div>
+    </main>
+
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

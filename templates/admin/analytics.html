@@ -1,0 +1,169 @@
+{% extends "admin/base.html" %} {% set active = "analytics" %} {% block content
+%}
+
+<div class="card p-7">
+  <div class="flex items-start justify-between gap-4 flex-wrap">
+    <div>
+      <h2 class="font-orbitron font-black text-2xl text-[color:var(--navy)]">
+        Analytics
+      </h2>
+      <p class="text-slate-600 text-sm mt-1">
+        Vue rapide de l’activité (30 derniers jours).
+      </p>
+    </div>
+
+    <div class="text-xs text-slate-500 flex items-center gap-2">
+      <i
+        data-lucide="shield-check"
+        class="w-4 h-4"
+        style="color: var(--teal)"
+      ></i>
+      Données internes (base SQLite)
+    </div>
+  </div>
+
+  <!-- Cards -->
+  <div class="mt-6 grid md:grid-cols-4 gap-4">
+    <div class="p-5 rounded-2xl border border-slate-200 bg-white/70">
+      <div class="text-xs text-slate-500 font-semibold">Utilisateurs</div>
+      <div class="text-2xl font-extrabold text-[color:var(--navy)] mt-1">
+        {{ users_count }}
+      </div>
+      <div class="text-xs text-slate-500 mt-2">Hors admins</div>
+    </div>
+
+    <div class="p-5 rounded-2xl border border-slate-200 bg-white/70">
+      <div class="text-xs text-slate-500 font-semibold">Admins</div>
+      <div class="text-2xl font-extrabold text-[color:var(--navy)] mt-1">
+        {{ admins_count }}
+      </div>
+      <div class="text-xs text-slate-500 mt-2">Accès back-office</div>
+    </div>
+
+    <div class="p-5 rounded-2xl border border-slate-200 bg-white/70">
+      <div class="text-xs text-slate-500 font-semibold">Newsletter</div>
+      <div class="text-2xl font-extrabold mt-1" style="color: var(--teal)">
+        {{ newsletter_count }}
+      </div>
+      <div class="text-xs text-slate-500 mt-2">Utilisateurs inscrits</div>
+    </div>
+
+    <div class="p-5 rounded-2xl border border-slate-200 bg-white/70">
+      <div class="text-xs text-slate-500 font-semibold">Articles publiés</div>
+      <div class="text-2xl font-extrabold mt-1" style="color: var(--mustard)">
+        {{ articles_count }}
+      </div>
+      <div class="text-xs text-slate-500 mt-2">Visibles public</div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="mt-8 grid lg:grid-cols-3 gap-6">
+    <!-- Inscriptions 30j -->
+    <div
+      class="lg:col-span-2 p-6 rounded-2xl border border-slate-200 bg-white/70"
+    >
+      <div class="flex items-center justify-between gap-3 flex-wrap">
+        <div>
+          <div class="font-extrabold text-[color:var(--navy)]">
+            Inscriptions (30 jours)
+          </div>
+          <div class="text-xs text-slate-500 mt-1">
+            Comptes utilisateurs créés par jour
+          </div>
+        </div>
+        <div class="text-xs text-slate-500 flex items-center gap-2">
+          <i data-lucide="calendar" class="w-4 h-4"></i> 30j
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <canvas id="signupChart" height="120"></canvas>
+      </div>
+    </div>
+
+    <!-- Confirmés vs Non confirmés -->
+    <div class="p-6 rounded-2xl border border-slate-200 bg-white/70">
+      <div class="font-extrabold text-[color:var(--navy)]">
+        Comptes confirmés
+      </div>
+      <div class="text-xs text-slate-500 mt-1">Utilisateurs (hors admins)</div>
+
+      <div class="mt-5 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-slate-600 text-sm">Confirmés</span>
+          <span class="font-extrabold" style="color: var(--teal)"
+            >{{ confirmed_users }}</span
+          >
+        </div>
+        <div class="h-2 rounded-full bg-slate-200 overflow-hidden">
+          {% set total = confirmed_users + unconfirmed_users %} {% set pct =
+          (confirmed_users / total * 100) if total else 0 %}
+          <div
+            style="width: {{ pct }}%; height:100%; background: var(--teal);"
+          ></div>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <span class="text-slate-600 text-sm">Non confirmés</span>
+          <span class="font-extrabold" style="color: var(--brick)"
+            >{{ unconfirmed_users }}</span
+          >
+        </div>
+        <div class="h-2 rounded-full bg-slate-200 overflow-hidden">
+          {% set pct2 = (unconfirmed_users / total * 100) if total else 0 %}
+          <div
+            style="width: {{ pct2 }}%; height:100%; background: var(--brick);"
+          ></div>
+        </div>
+
+        <div class="mt-4 text-xs text-slate-500">
+          Si “non confirmés” est élevé, c’est souvent un problème de
+          délivrabilité (spam) ou d’UX.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const labels = {{ labels|tojson }};
+    const values = {{ values|tojson }};
+
+    const ctx = document.getElementById("signupChart").getContext("2d");
+
+    new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [{
+          label: "Inscriptions",
+          data: values,
+          borderWidth: 1,
+          borderRadius: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: true }
+        },
+        scales: {
+          x: {
+            ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 10 }
+          },
+          y: {
+            beginAtZero: true,
+            ticks: { precision: 0 }
+          }
+        }
+      }
+    });
+  });
+</script>
+
+{% endblock %}

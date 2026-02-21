@@ -1,0 +1,99 @@
+{% extends "admin/base.html" %} {% set active = "users" %} {% block content %}
+
+<div class="card p-7">
+  <div class="flex items-start justify-between gap-4 flex-wrap">
+    <div>
+      <h2 class="font-orbitron font-black text-2xl text-[color:var(--navy)]">
+        Utilisateurs
+      </h2>
+      <p class="text-slate-600 text-sm mt-1">
+        Comptes classiques (hors admins).
+      </p>
+    </div>
+
+    <!-- Compteurs -->
+    <div class="flex gap-3 flex-wrap">
+      <div class="px-4 py-2 rounded-xl border border-slate-200 bg-white/70">
+        <div class="text-xs text-slate-500 font-semibold">
+          Total utilisateurs
+        </div>
+        <div class="text-lg font-extrabold text-[color:var(--navy)]">
+          {{ users_count }}
+        </div>
+      </div>
+
+      <div class="px-4 py-2 rounded-xl border border-slate-200 bg-white/70">
+        <div class="text-xs text-slate-500 font-semibold">Newsletter</div>
+        <div class="text-lg font-extrabold" style="color: var(--teal)">
+          {{ newsletter_count }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-6 overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead class="text-slate-500">
+        <tr>
+          <th class="text-left py-3">Nom</th>
+          <th class="text-left py-3">Email</th>
+          <th class="text-left py-3">Newsletter</th>
+          <th class="text-left py-3">Confirmé</th>
+          <th class="text-left py-3">Créé le</th>
+          <th class="text-right py-3">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody class="text-slate-700">
+        {% for u in users %}
+        <tr class="border-t border-slate-200/70">
+          <td class="py-3 font-extrabold text-[color:var(--navy)]">
+            {{ u.first_name }} {{ u.last_name }}
+          </td>
+          <td class="py-3">{{ u.email }}</td>
+
+          <td class="py-3">
+            {% if u.newsletter %}
+            <span style="color: var(--teal); font-weight: 900">Oui</span>
+            {% else %}
+            <span class="text-slate-500 font-semibold">Non</span>
+            {% endif %}
+          </td>
+
+          <td class="py-3">
+            {% if u.confirmed %}
+            <span style="color: var(--teal); font-weight: 900">Oui</span>
+            {% else %}
+            <span style="color: var(--brick); font-weight: 900">Non</span>
+            {% endif %}
+          </td>
+
+          <td class="py-3 text-slate-500">
+            {{ u.created_at.strftime("%d/%m/%Y") if u.created_at else "" }}
+          </td>
+
+          <td class="py-3 text-right">
+            <form
+              method="POST"
+              action="{{ url_for('admin_user_delete', user_id=u.id) }}"
+              onsubmit="return confirm('Supprimer cet utilisateur ?');"
+              class="inline"
+            >
+              <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+              />
+              <button class="btn-cta" type="submit" title="Supprimer">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

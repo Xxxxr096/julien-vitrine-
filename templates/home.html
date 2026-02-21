@@ -318,9 +318,9 @@
       <nav class="flex space-x-6 text-sm font-semibold items-center text-slate-600">
         <a href="{{ url_for('home') }}" class="text-[color:var(--navy)] font-extrabold">Accueil</a>
         <a href="{{ url_for('about') }}" class="hover:text-[color:var(--teal)] transition">À propos</a>
-        <a href="{{ url_for('services') }}" class="hover:text-[color:var(--teal)] transition">Services</a>
+        <a href="{{ url_for('articles') }}" class="hover:text-[color:var(--teal)] transition">Articles</a>
         <a href="{{ url_for('contact') }}" class="hover:text-[color:var(--teal)] transition">Contact</a>
-        <a href="{{ url_for('services') }}" class="nav-link-glow">Découvrir</a>
+        <a href="{{ url_for('articles') }}" class="nav-link-glow">Découvrir</a>
       </nav>
 
       <!-- CTA -->
@@ -375,7 +375,7 @@
         réduction des risques, gestes efficaces, mouvement intelligent.
       </p>
 
-      <a href="{{ url_for('services') }}" class="btn-cta md" data-aos="zoom-in" data-aos-delay="400">
+      <a href="{{ url_for('about') }}" class="btn-cta md" data-aos="zoom-in" data-aos-delay="400">
         Découvrir nos services
       </a>
     </div>
@@ -451,7 +451,7 @@
     </div>
 
     <div class="mt-14">
-      <a href="{{ url_for('services') }}" class="btn-cta md">
+      <a href="{{ url_for('about') }}" class="btn-cta md">
         Voir tous les services
       </a>
     </div>

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ title or "Admin — LBG Santé Formation" }}</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Orbitron:wght@700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='img/logo.png') }}"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+      :root {
+        --navy: #1e2a5a;
+        --teal: #2d8c86;
+        --brick: #b33a2b;
+        --mustard: #d79a2b;
+        --ink: #0f172a;
+        --soft: #f6f8ff;
+      }
+      body {
+        font-family: "Poppins", sans-serif;
+        background: radial-gradient(
+          circle at top,
+          rgba(45, 140, 134, 0.14) 0%,
+          rgba(255, 255, 255, 1) 35%,
+          rgba(246, 248, 255, 1) 100%
+        );
+        color: var(--ink);
+        min-height: 100vh;
+      }
+      .nav-link-glow {
+        font-weight: 900;
+        background: linear-gradient(
+          90deg,
+          var(--brick),
+          var(--mustard),
+          var(--teal),
+          var(--brick)
+        );
+        background-size: 300%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: glow-shift 3s linear infinite;
+      }
+      @keyframes glow-shift {
+        0% {
+          background-position: 0%;
+        }
+        100% {
+          background-position: 300%;
+        }
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.78);
+        border: 1px solid rgba(30, 42, 90, 0.12);
+        border-radius: 1rem;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 12px 40px rgba(15, 23, 42, 0.07);
+      }
+
+      .btn-cta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-weight: 800;
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
+        border-radius: 0.6rem;
+        background: var(--brick);
+        color: #fff;
+        border: none;
+        transition: transform 0.2s ease, filter 0.2s ease;
+      }
+      .btn-cta:hover {
+        transform: scale(1.03);
+        filter: drop-shadow(0 0 10px rgba(179, 58, 43, 0.22));
+      }
+      .btn-cta.alt {
+        background: var(--teal);
+      }
+      .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-weight: 800;
+        font-size: 0.875rem;
+        padding: 0.5rem 0.9rem;
+        border-radius: 0.6rem;
+        background: rgba(255, 255, 255, 0.72);
+        color: rgba(30, 42, 90, 0.88);
+        border: 1px solid rgba(30, 42, 90, 0.12);
+        transition: transform 0.2s ease, border-color 0.2s ease;
+      }
+      .btn-ghost:hover {
+        transform: translateY(-1px);
+        border-color: rgba(45, 140, 134, 0.35);
+      }
+
+      .side {
+        width: 290px;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        padding: 1.25rem;
+        border-right: 1px solid rgba(148, 163, 184, 0.35);
+        background: rgba(255, 255, 255, 0.55);
+        backdrop-filter: blur(12px);
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.7rem 0.8rem;
+        border-radius: 0.9rem;
+        font-weight: 800;
+        color: rgba(30, 42, 90, 0.78);
+        border: 1px solid transparent;
+        transition: transform 0.15s ease, border-color 0.15s ease,
+          background 0.15s ease;
+      }
+      .nav-item:hover {
+        transform: translateY(-1px);
+        border-color: rgba(45, 140, 134, 0.25);
+        background: rgba(255, 255, 255, 0.65);
+      }
+      .nav-item.active {
+        color: rgba(30, 42, 90, 1);
+        border-color: rgba(45, 140, 134, 0.35);
+        background: rgba(255, 255, 255, 0.75);
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+      }
+
+      /* Flash */
+      .flash-wrap {
+        display: grid;
+        gap: 0.75rem;
+      }
+      .flash {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.6rem;
+        padding: 0.85rem 1rem;
+        border-radius: 0.85rem;
+        font-size: 0.875rem;
+        font-weight: 700;
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid rgba(15, 23, 42, 0.12);
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+      }
+      .flash.success {
+        border-color: rgba(34, 197, 94, 0.35);
+        color: #166534;
+      }
+      .flash.error {
+        border-color: rgba(239, 68, 68, 0.35);
+        color: #7f1d1d;
+      }
+      .flash.warning {
+        border-color: rgba(245, 158, 11, 0.45);
+        color: #78350f;
+      }
+      .flash.info {
+        border-color: rgba(59, 130, 246, 0.35);
+        color: #1e3a8a;
+      }
+
+      .field {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid rgba(30, 42, 90, 0.14);
+        border-radius: 0.75rem;
+        padding: 0.85rem 0.95rem;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+      .field:focus {
+        border-color: rgba(45, 140, 134, 0.45);
+        box-shadow: 0 0 0 4px rgba(45, 140, 134, 0.12);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="flex min-h-screen">
+      <!-- SIDEBAR -->
+      <aside class="side">
+        <div class="flex items-center gap-3">
+          <img
+            src="{{ url_for('static', filename='img/logo.png') }}"
+            class="h-10 w-auto"
+            alt="LBG"
+          />
+          <div>
+            <div
+              class="font-orbitron font-black text-[color:var(--navy)] text-lg leading-none"
+            >
+              Admin <span class="nav-link-glow">LBG</span>
+            </div>
+            <div class="text-xs text-slate-500 font-semibold">
+              Gestion contenu & comptes
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 grid gap-2">
+          <a
+            class="nav-item {% if active=='articles' %}active{% endif %}"
+            href="{{ url_for('admin_articles') }}"
+          >
+            <i
+              data-lucide="file-text"
+              class="w-4 h-4"
+              style="color: var(--teal)"
+            ></i>
+            Articles
+          </a>
+          <a
+            class="nav-item {% if active=='users' %}active{% endif %}"
+            href="{{ url_for('admin_users') }}"
+          >
+            <i
+              data-lucide="users"
+              class="w-4 h-4"
+              style="color: var(--mustard)"
+            ></i>
+            Utilisateurs
+          </a>
+          <a
+            class="nav-item {% if active=='admins' %}active{% endif %}"
+            href="{{ url_for('admin_admins') }}"
+          >
+            <i
+              data-lucide="shield"
+              class="w-4 h-4"
+              style="color: var(--brick)"
+            ></i>
+            Admins
+          </a>
+
+          <a
+            href="{{ url_for('admin_analytics') }}"
+            class="nav-item {% if active=='analytics' %}active{% endif %}"
+          >
+            <i
+              data-lucide="bar-chart-3"
+              class="w-5 h-5"
+              class="w-4 h-4"
+              style="color: var(--brick)"
+            ></i>
+            <span>Analytics</span>
+          </a>
+        </div>
+
+        <div class="mt-6 card p-4">
+          <div class="text-xs text-slate-500 font-semibold">Connecté :</div>
+          <div class="font-extrabold text-[color:var(--navy)]">
+            {{ current_user.first_name }} {{ current_user.last_name }}
+          </div>
+          <div class="text-sm text-slate-600">{{ current_user.email }}</div>
+
+          <div class="mt-4 grid gap-2">
+            <a class="btn-ghost w-full" href="{{ url_for('home') }}">
+              <i data-lucide="home" class="w-4 h-4"></i> Retour site
+            </a>
+            <a class="btn-cta w-full" href="{{ url_for('logout') }}">
+              <i data-lucide="log-out" class="w-4 h-4"></i> Déconnexion
+            </a>
+          </div>
+        </div>
+
+        <div class="mt-6 text-xs text-slate-400">
+          © 2026 LBG Santé Formation
+        </div>
+      </aside>
+
+      <!-- CONTENT -->
+      <main class="flex-1 p-6 md:p-10">
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %}
+        <div class="flash-wrap mb-6">
+          {% for category, message in messages %}
+          <div class="flash {{ category }}">
+            <i
+              data-lucide="
+                  {% if category == 'success' %}check-circle
+                  {% elif category == 'error' %}x-circle
+                  {% elif category == 'warning' %}alert-triangle
+                  {% else %}info{% endif %}
+                "
+              class="w-5 h-5"
+            ></i>
+            <span>{{ message }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %} {% endwith %} {% block content %}{% endblock %}
+      </main>
+    </div>
+
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LBG Santé Formation — Articles</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Orbitron:wght@700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='img/logo.png') }}"
+    />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+
+    <style>
+      :root {
+        --navy: #1e2a5a;
+        --teal: #2d8c86;
+        --brick: #b33a2b;
+        --mustard: #d79a2b;
+        --ink: #0f172a;
+      }
+      body {
+        font-family: "Poppins", sans-serif;
+        background: radial-gradient(
+          circle at top,
+          rgba(45, 140, 134, 0.18) 0%,
+          rgba(255, 255, 255, 1) 35%,
+          rgba(246, 248, 255, 1) 100%
+        );
+        color: var(--ink);
+        overflow-x: hidden;
+        min-height: 100vh;
+      }
+      .nav-link-glow {
+        font-weight: 800;
+        background: linear-gradient(
+          90deg,
+          var(--brick),
+          var(--mustard),
+          var(--teal),
+          var(--brick)
+        );
+        background-size: 300%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: glow-shift 3s linear infinite;
+      }
+      @keyframes glow-shift {
+        0% {
+          background-position: 0%;
+        }
+        100% {
+          background-position: 300%;
+        }
+      }
+
+      .btn-cta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-weight: 800;
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        background: var(--brick);
+        color: #fff;
+        border: none;
+        transition: transform 0.2s ease, filter 0.2s ease;
+      }
+      .btn-cta:hover {
+        transform: scale(1.05);
+        filter: drop-shadow(0 0 10px rgba(179, 58, 43, 0.3));
+      }
+      .btn-cta.alt {
+        background: var(--teal);
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.78);
+        border: 1px solid rgba(30, 42, 90, 0.12);
+        border-radius: 1rem;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 12px 40px rgba(15, 23, 42, 0.07);
+        transition: transform 0.2s ease, box-shadow 0.2s ease,
+          border-color 0.2s ease;
+        overflow: hidden;
+      }
+      .card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(45, 140, 134, 0.35);
+        box-shadow: 0 20px 55px rgba(15, 23, 42, 0.1);
+      }
+      .page {
+        padding-top: 7.25rem;
+        padding-bottom: 4rem;
+      }
+      .kicker {
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        font-weight: 800;
+        font-size: 0.72rem;
+        color: var(--brick);
+      }
+      .title {
+        font-family: "Orbitron", sans-serif;
+        font-weight: 900;
+        color: var(--navy);
+        line-height: 1.05;
+      }
+
+      .thumb {
+        height: 185px;
+        width: 100%;
+        object-fit: cover;
+        background: #eef2ff;
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-weight: 800;
+        font-size: 0.75rem;
+        padding: 0.3rem 0.55rem;
+        border-radius: 999px;
+        border: 1px solid rgba(30, 42, 90, 0.12);
+        background: rgba(255, 255, 255, 0.75);
+        color: rgba(30, 42, 90, 0.85);
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- NAVBAR -->
+    <header
+      class="fixed top-0 w-full z-40 bg-white/75 backdrop-blur-md border-b border-slate-200"
+    >
+      <div
+        class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4"
+      >
+        <a href="{{ url_for('home') }}" class="flex items-center gap-3">
+          <img
+            src="{{ url_for('static', filename='img/logo.png') }}"
+            class="h-10 w-auto"
+            alt="LBG"
+          />
+          <div>
+            <h1
+              class="text-xl font-orbitron font-black tracking-wide text-[color:var(--navy)]"
+            >
+              LBG <span class="nav-link-glow">Santé Formation</span>
+            </h1>
+            <p class="text-xs font-semibold text-slate-500 -mt-1">
+              Prévention • Mouvement • Santé durable
+            </p>
+          </div>
+        </a>
+
+        <nav
+          class="flex space-x-6 text-sm font-semibold items-center text-slate-600"
+        >
+          <a
+            href="{{ url_for('home') }}"
+            class="hover:text-[color:var(--teal)] transition"
+            >Accueil</a
+          >
+          <a
+            href="{{ url_for('about') }}"
+            class="hover:text-[color:var(--teal)] transition"
+            >À propos</a
+          >
+          <a
+            href="{{ url_for('articles') }}"
+            class="text-[color:var(--navy)] font-extrabold"
+            >Articles</a
+          >
+          <a
+            href="{{ url_for('contact') }}"
+            class="hover:text-[color:var(--teal)] transition"
+            >Contact</a
+          >
+          <a href="{{ url_for('articles') }}" class="nav-link-glow"
+            >Découvrir</a
+          >
+        </nav>
+
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('logout') }}" class="btn-cta"
+          ><i data-lucide="log-out" class="w-4 h-4"></i>Déconnexion</a
+        >
+        {% else %}
+        <a href="{{ url_for('login') }}" class="btn-cta"
+          ><i data-lucide="log-in" class="w-4 h-4"></i>Connexion</a
+        >
+        {% endif %}
+      </div>
+    </header>
+
+    <main class="page">
+      <div class="max-w-6xl mx-auto px-6">
+        <section class="card p-7 md:p-10" data-aos="fade-up">
+          <div class="kicker">
+            <span class="nav-link-glow">Bibliothèque</span>
+          </div>
+          <h2 class="title text-3xl sm:text-5xl mt-3">
+            Articles & ressources <span class="nav-link-glow">pratiques</span>
+          </h2>
+          <p class="text-slate-600 mt-5 leading-relaxed max-w-3xl">
+            Des articles basés sur des sources reconnues (recommandations,
+            revues systématiques, institutions), traduits en actions terrain :
+            prévention, mouvement, routines simples.
+          </p>
+
+          <div class="mt-6 flex gap-2 flex-wrap">
+            <span class="pill"
+              ><i
+                data-lucide="shield"
+                class="w-4 h-4"
+                style="color: var(--teal)"
+              ></i>
+              Prévention</span
+            >
+            <span class="pill"
+              ><i
+                data-lucide="activity"
+                class="w-4 h-4"
+                style="color: var(--mustard)"
+              ></i>
+              Santé</span
+            >
+            <span class="pill"
+              ><i
+                data-lucide="move"
+                class="w-4 h-4"
+                style="color: var(--teal)"
+              ></i>
+              Mouvement</span
+            >
+            <span class="pill"
+              ><i
+                data-lucide="book-open"
+                class="w-4 h-4"
+                style="color: var(--brick)"
+              ></i>
+              Sources</span
+            >
+          </div>
+        </section>
+
+        <section
+          class="mt-8 grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+          data-aos="fade-up"
+        >
+          {% for a in articles %}
+          <article class="card">
+            {% if a.cover_image %}
+            <img class="thumb" src="{{ a.cover_image }}" alt="{{ a.title }}" />
+            {% else %}
+            <div class="thumb"></div>
+            {% endif %}
+
+            <div class="p-6">
+              <h3
+                class="font-orbitron font-black text-[color:var(--navy)] text-xl leading-tight"
+              >
+                {{ a.title }}
+              </h3>
+
+              <p class="text-slate-600 text-sm mt-3 leading-relaxed">
+                {{ a.excerpt }}
+              </p>
+
+              <div
+                class="mt-5 flex items-center justify-between gap-3 flex-wrap"
+              >
+                <span class="text-xs text-slate-500">
+                  {{ a.created_at.strftime("%d/%m/%Y") if a.created_at else ""
+                  }}
+                </span>
+
+                {% if current_user.is_authenticated %}
+                <a
+                  class="btn-cta alt"
+                  href="{{ url_for('article_detail', slug=a.slug) }}"
+                >
+                  <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                  Lire l’article
+                </a>
+                {% else %}
+                <a
+                  class="btn-cta"
+                  href="{{ url_for('login', next=url_for('article_detail', slug=a.slug)) }}"
+                >
+                  <i data-lucide="lock" class="w-4 h-4"></i>
+                  Lire la suite
+                </a>
+                {% endif %}
+              </div>
+            </div>
+          </article>
+          {% endfor %}
+        </section>
+      </div>
+    </main>
+
+    <footer
+      class="bg-white/70 border-t border-slate-200 py-10 text-center"
+      data-aos="fade-up"
+    >
+      <h1
+        class="text-2xl font-orbitron font-black mb-2 text-[color:var(--navy)]"
+      >
+        LBG <span class="nav-link-glow">Santé</span> Formation
+      </h1>
+      <p class="text-slate-500 text-sm mt-4">
+        © 2026 LBG Santé Formation —
+        <a
+          href="{{ url_for('contact') }}"
+          class="underline font-semibold hover:text-[color:var(--brick)]"
+          >Contact</a
+        >
+      </p>
+    </footer>
+
+    <script>
+      lucide.createIcons();
+    </script>
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script>
+      AOS.init({
+        duration: 900,
+        once: true,
+        offset: 90,
+        easing: "ease-in-out",
+      });
+    </script>
+  </body>
+</html>
