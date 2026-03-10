@@ -79,6 +79,46 @@ class Article(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
+class NewsletterCampaign(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+    name = db.Column(db.String(150), nullable=False)
+    subject = db.Column(db.String(255), nullable=False)
+    content_text = db.Column(db.Text, nullable=False)
+
+    frequency = db.Column(db.String(20), nullable=False, default="weekly")
+    # daily / weekly / monthly
+
+    start_date = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    end_date = db.Column(db.DateTime, nullable=True)
+
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
+
+    last_sent_at = db.Column(db.DateTime, nullable=True)
+    next_send_at = db.Column(db.DateTime, nullable=True)
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow,
+        nullable=False,
+    )
+
+
+class NewsletterSendLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+    campaign_id = db.Column(
+        db.Integer, db.ForeignKey("newsletter_campaign.id"), nullable=False
+    )
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+    sent_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    status = db.Column(db.String(50), default="sent", nullable=False)
+    error_message = db.Column(db.Text, nullable=True)
+
+
 # Fonction
 from functools import wraps
 from flask import abort
@@ -340,6 +380,136 @@ def is_safe_url(target):
     return test_url.scheme in ("http", "https") and ref_url.netloc == test_url.netloc
 
 
+def calculate_next_send_at(current_date, frequency):
+    if frequency == "daily":
+        return current_date + timedelta(days=1)
+    elif frequency == "weekly":
+        return current_date + timedelta(weeks=1)
+    elif frequency == "monthly":
+        return current_date + timedelta(days=30)
+    return None
+
+
+def send_newsletter_email(to_email, subject, html_content):
+    sender_email = os.getenv("MAIL_USER")
+    sender_password = os.getenv("MAIL_PASSWORD")
+
+    msg = MIMEText(html_content, "html", "utf-8")
+    msg["Subject"] = subject
+    msg["From"] = sender_email
+    msg["To"] = to_email
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+        server.login(sender_email, sender_password)
+        server.send_message(msg)
+
+
+def send_campaign_now(campaign):
+    recipients = User.query.filter_by(
+        is_admin=False, newsletter=True, confirmed=True
+    ).all()
+
+    for user in recipients:
+        try:
+            unsubscribe_url = url_for(
+                "unsubscribe_newsletter", user_id=user.id, _external=True
+            )
+
+            message_text = campaign.content_text or ""
+            message_text = message_text.replace("{{first_name}}", user.first_name or "")
+            message_text = message_text.replace("{{last_name}}", user.last_name or "")
+            message_text = message_text.replace("{{email}}", user.email or "")
+
+            # transformer les retours à la ligne en <br>
+            message_html = message_text.replace("\n", "<br>")
+
+            # lien de désinscription ajouté automatiquement
+            final_html = f"""
+            <html>
+            <body style="font-family:Poppins,Arial,sans-serif;background:#f6f8ff;padding:40px;">
+              <div style="max-width:600px;margin:auto;background:white;border-radius:16px;padding:32px;
+                          box-shadow:0 20px 50px rgba(15,23,42,0.15);">
+
+                <h2 style="color:#1E2A5A;font-family:Orbitron,Arial;">
+                  LBG Santé Formation
+                </h2>
+
+                <div style="color:#0f172a;font-size:15px;line-height:1.7;">
+                  {message_html}
+                </div>
+
+                <hr style="border:none;height:1px;background:#e5e7eb;margin:28px 0;">
+
+                <p style="font-size:13px;color:#64748b;">
+                  Vous recevez cet email car vous avez accepté de recevoir les actualités de LBG Santé Formation.
+                </p>
+
+                <p style="margin-top:18px;">
+                  <a href="{unsubscribe_url}" style="color:#B33A2B;font-weight:700;">
+                    Se désinscrire
+                  </a>
+                </p>
+
+                <p style="font-size:12px;color:#64748b;text-align:center;margin-top:28px;">
+                  © 2026 LBG Santé Formation — Prévention • Mouvement • Santé durable
+                </p>
+              </div>
+            </body>
+            </html>
+            """
+
+            send_newsletter_email(
+                to_email=user.email, subject=campaign.subject, html_content=final_html
+            )
+
+            log = NewsletterSendLog(
+                campaign_id=campaign.id, user_id=user.id, status="sent"
+            )
+            db.session.add(log)
+
+        except Exception as e:
+            log = NewsletterSendLog(
+                campaign_id=campaign.id,
+                user_id=user.id,
+                status="failed",
+                error_message=str(e),
+            )
+            db.session.add(log)
+
+    now = datetime.utcnow()
+    campaign.last_sent_at = now
+    campaign.next_send_at = calculate_next_send_at(now, campaign.frequency)
+
+    # On laisse la campagne active tant que la date de fin n'est pas dépassée
+    if campaign.end_date and now >= campaign.end_date:
+        campaign.is_active = False
+
+    db.session.commit()
+
+
+def process_due_campaigns():
+    now = datetime.utcnow()
+
+    campaigns = NewsletterCampaign.query.filter(
+        NewsletterCampaign.is_active == True,
+        NewsletterCampaign.next_send_at.isnot(None),
+        NewsletterCampaign.next_send_at <= now,
+    ).all()
+
+    processed = 0
+
+    for campaign in campaigns:
+        if campaign.end_date and now > campaign.end_date:
+            campaign.is_active = False
+            db.session.commit()
+            continue
+
+        send_campaign_now(campaign)
+        processed += 1
+
+    return processed
+
+
 # Route pour la page d'accueil
 @app.route("/")
 def home():
@@ -348,7 +518,7 @@ def home():
 
 @app.route("/about")
 def about():
-    return render_template("about.html")  # tu peux créer un fichier minimal
+    return render_template("about.html")
 
 
 @app.route("/articles")
@@ -977,6 +1147,176 @@ def admin_analytics():
         labels=labels,
         values=values,
     )
+
+
+@app.route("/unsubscribe-newsletter/<int:user_id>")
+def unsubscribe_newsletter(user_id):
+    user = User.query.get_or_404(user_id)
+
+    if not user.newsletter:
+        flash("Vous êtes déjà désinscrit de la newsletter.", "info")
+        return redirect(url_for("home"))
+
+    user.newsletter = False
+    db.session.commit()
+
+    flash("Vous avez bien été désinscrit de la newsletter.", "success")
+    return redirect(url_for("home"))
+
+
+@app.route("/admin/newsletters")
+@admin_required
+def admin_newsletters():
+    campaigns = NewsletterCampaign.query.order_by(
+        NewsletterCampaign.created_at.desc()
+    ).all()
+
+    campaigns_count = NewsletterCampaign.query.count()
+    active_campaigns_count = NewsletterCampaign.query.filter_by(is_active=True).count()
+    subscribers_count = User.query.filter_by(
+        is_admin=False, newsletter=True, confirmed=True
+    ).count()
+
+    return render_template(
+        "admin/newsletters.html",
+        campaigns=campaigns,
+        campaigns_count=campaigns_count,
+        active_campaigns_count=active_campaigns_count,
+        subscribers_count=subscribers_count,
+    )
+
+
+@app.route("/admin/newsletters/new", methods=["GET", "POST"])
+@admin_required
+def admin_newsletter_new():
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        subject = request.form.get("subject", "").strip()
+        content_text = request.form.get("content_text", "").strip()
+        frequency = request.form.get("frequency", "weekly").strip()
+
+        duration_value = request.form.get("duration_value", "1").strip()
+        duration_unit = request.form.get("duration_unit", "weeks").strip()
+
+        if not name or not subject or not content_text:
+            flash("Tous les champs sont obligatoires.", "error")
+            return redirect(url_for("admin_newsletter_new"))
+
+        try:
+            duration_value = int(duration_value)
+            if duration_value < 1:
+                duration_value = 1
+        except ValueError:
+            duration_value = 1
+
+        start_date = datetime.utcnow()
+
+        if duration_unit == "days":
+            end_date = start_date + timedelta(days=duration_value)
+        elif duration_unit == "weeks":
+            end_date = start_date + timedelta(weeks=duration_value)
+        elif duration_unit == "months":
+            end_date = start_date + timedelta(days=30 * duration_value)
+        else:
+            end_date = None
+
+        campaign = NewsletterCampaign(
+            name=name,
+            subject=subject,
+            content_text=content_text,
+            frequency=frequency,
+            start_date=start_date,
+            end_date=end_date,
+            is_active=True,
+            next_send_at=start_date,
+        )
+
+        db.session.add(campaign)
+        db.session.commit()
+
+        flash("Newsletter créée avec succès ✅", "success")
+        return redirect(url_for("admin_newsletters"))
+
+    return render_template("admin/newsletter_new.html", active="newsletters")
+
+
+@app.route("/admin/newsletters/<int:campaign_id>/edit", methods=["GET", "POST"])
+@admin_required
+def admin_newsletter_edit(campaign_id):
+    campaign = NewsletterCampaign.query.get_or_404(campaign_id)
+
+    if request.method == "POST":
+        campaign.name = request.form.get("name", "").strip()
+        campaign.subject = request.form.get("subject", "").strip()
+        campaign.content_text = request.form.get("content_text", "").strip()
+        campaign.frequency = request.form.get("frequency", "weekly").strip()
+        campaign.is_active = "is_active" in request.form
+
+        db.session.commit()
+        flash("Newsletter modifiée avec succès ✏️", "success")
+        return redirect(url_for("admin_newsletters"))
+
+    return render_template(
+        "admin/newsletter_edit.html",
+        campaign=campaign,
+        active="newsletters",
+    )
+
+
+@app.route("/admin/newsletters/<int:campaign_id>/send", methods=["POST"])
+@admin_required
+def admin_newsletter_send_now(campaign_id):
+    campaign = NewsletterCampaign.query.get_or_404(campaign_id)
+
+    try:
+        send_campaign_now(campaign)
+        flash("Newsletter envoyée aux abonnés ✅", "success")
+    except Exception as e:
+        flash(f"Erreur pendant l'envoi : {str(e)}", "error")
+
+    return redirect(url_for("admin_newsletters"))
+
+
+@app.route("/admin/newsletters/<int:campaign_id>/delete", methods=["POST"])
+@admin_required
+def admin_newsletter_delete(campaign_id):
+    campaign = NewsletterCampaign.query.get_or_404(campaign_id)
+
+    NewsletterSendLog.query.filter_by(campaign_id=campaign.id).delete()
+    db.session.delete(campaign)
+    db.session.commit()
+
+    flash("Newsletter supprimée 🗑️", "info")
+    return redirect(url_for("admin_newsletters"))
+
+
+@app.route("/admin/newsletters/<int:campaign_id>/logs")
+@admin_required
+def admin_newsletter_logs(campaign_id):
+    campaign = NewsletterCampaign.query.get_or_404(campaign_id)
+    logs = (
+        NewsletterSendLog.query.filter_by(campaign_id=campaign.id)
+        .order_by(NewsletterSendLog.sent_at.desc())
+        .all()
+    )
+
+    return render_template(
+        "admin/newsletter_logs.html",
+        campaign=campaign,
+        logs=logs,
+    )
+
+
+@app.route("/cron/process-newsletters", methods=["POST"])
+def cron_process_newsletters():
+    token = request.headers.get("X-CRON-TOKEN")
+    secret = os.getenv("CRON_SECRET_TOKEN")
+
+    if token != secret:
+        abort(401)
+
+    processed = process_due_campaigns()
+    return {"processed": processed}, 200
 
 
 if __name__ == "__main__":

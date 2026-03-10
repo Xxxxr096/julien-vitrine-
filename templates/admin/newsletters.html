@@ -1,0 +1,152 @@
+{% extends "admin/base.html" %} {% block content %}
+<section class="p-6 md:p-10">
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-slate-800">Newsletters</h1>
+      <p class="text-slate-500 mt-1">
+        Gérez vos campagnes email et vos envois récurrents.
+      </p>
+    </div>
+    <a
+      href="{{ url_for('admin_newsletter_new') }}"
+      class="px-5 py-3 rounded-xl bg-[#2D8C86] text-white font-semibold shadow hover:opacity-90 transition"
+    >
+      Nouvelle campagne
+    </a>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-4 mb-8">
+    <div class="bg-white rounded-2xl shadow p-5">
+      <p class="text-slate-500 text-sm">Campagnes</p>
+      <p class="text-3xl font-bold text-slate-800 mt-2">
+        {{ campaigns_count }}
+      </p>
+    </div>
+    <div class="bg-white rounded-2xl shadow p-5">
+      <p class="text-slate-500 text-sm">Campagnes actives</p>
+      <p class="text-3xl font-bold text-slate-800 mt-2">
+        {{ active_campaigns_count }}
+      </p>
+    </div>
+    <div class="bg-white rounded-2xl shadow p-5">
+      <p class="text-slate-500 text-sm">Abonnés newsletter</p>
+      <p class="text-3xl font-bold text-slate-800 mt-2">
+        {{ subscribers_count }}
+      </p>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead class="bg-slate-50">
+          <tr>
+            <th class="px-5 py-4 text-sm font-semibold text-slate-600">Nom</th>
+            <th class="px-5 py-4 text-sm font-semibold text-slate-600">
+              Sujet
+            </th>
+            <th class="px-5 py-4 text-sm font-semibold text-slate-600">
+              Fréquence
+            </th>
+            <th class="px-5 py-4 text-sm font-semibold text-slate-600">
+              Prochain envoi
+            </th>
+            <th class="px-5 py-4 text-sm font-semibold text-slate-600">
+              Statut
+            </th>
+            <th class="px-5 py-4 text-sm font-semibold text-slate-600">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for campaign in campaigns %}
+          <tr class="border-t border-slate-100">
+            <td class="px-5 py-4 font-medium text-slate-800">
+              {{ campaign.name }}
+            </td>
+            <td class="px-5 py-4 text-slate-600">{{ campaign.subject }}</td>
+            <td class="px-5 py-4 text-slate-600">{{ campaign.frequency }}</td>
+            <td class="px-5 py-4 text-slate-600">
+              {{ campaign.next_send_at.strftime('%d/%m/%Y %H:%M') if
+              campaign.next_send_at else '-' }}
+            </td>
+            <td class="px-5 py-4">
+              {% if campaign.is_active %}
+              <span
+                class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700"
+                >Active</span
+              >
+              {% else %}
+              <span
+                class="px-3 py-1 rounded-full text-xs font-semibold bg-rose-100 text-rose-700"
+                >Inactive</span
+              >
+              {% endif %}
+            </td>
+            <td class="px-5 py-4">
+              <div class="flex flex-wrap gap-2">
+                <a
+                  href="{{ url_for('admin_newsletter_edit', campaign_id=campaign.id) }}"
+                  class="px-3 py-2 rounded-lg bg-slate-100 text-slate-700 text-sm font-medium hover:bg-slate-200 transition"
+                >
+                  Modifier
+                </a>
+
+                <form
+                  method="POST"
+                  action="{{ url_for('admin_newsletter_send_now', campaign_id=campaign.id) }}"
+                >
+                  <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                  />
+                  <button
+                    type="submit"
+                    class="px-3 py-2 rounded-lg bg-[#B33A2B] text-white text-sm font-medium hover:opacity-90 transition"
+                  >
+                    Envoyer
+                  </button>
+                </form>
+
+                <a
+                  href="{{ url_for('admin_newsletter_logs', campaign_id=campaign.id) }}"
+                  class="px-3 py-2 rounded-lg bg-[#1E2A5A] text-white text-sm font-medium hover:opacity-90 transition"
+                >
+                  Historique
+                </a>
+
+                <form
+                  method="POST"
+                  action="{{ url_for('admin_newsletter_delete', campaign_id=campaign.id) }}"
+                  onsubmit="return confirm('Supprimer cette campagne ?');"
+                >
+                  <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                  />
+                  <button
+                    type="submit"
+                    class="px-3 py-2 rounded-lg bg-rose-100 text-rose-700 text-sm font-medium hover:bg-rose-200 transition"
+                  >
+                    Supprimer
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="6" class="px-5 py-8 text-center text-slate-500">
+              Aucune campagne newsletter pour le moment.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}

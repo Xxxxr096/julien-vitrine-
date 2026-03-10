@@ -262,6 +262,17 @@
             ></i>
             <span>Analytics</span>
           </a>
+          <a
+            class="nav-item {% if active=='newsletters' %}active{% endif %}"
+            href="{{ url_for('admin_newsletters') }}"
+          >
+            <i
+              data-lucide="mail"
+              class="w-4 h-4"
+              style="color: var(--teal)"
+            ></i>
+            Newsletters
+          </a>
         </div>
 
         <div class="mt-6 card p-4">

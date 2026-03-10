@@ -1,0 +1,139 @@
+{% extends "admin/base.html" %} {% block content %}
+<section class="p-6 md:p-10">
+  <div class="max-w-4xl mx-auto card p-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-black text-[color:var(--navy)]">
+        Nouvelle campagne newsletter
+      </h1>
+      <p class="text-slate-500 mt-2">
+        Créez une campagne envoyée uniquement aux utilisateurs ayant accepté de
+        recevoir la newsletter.
+      </p>
+    </div>
+
+    <form method="POST" class="space-y-6">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+      <div>
+        <label
+          class="block text-sm font-extrabold text-[color:var(--navy)] mb-2"
+        >
+          Nom de la campagne
+        </label>
+        <input
+          type="text"
+          name="name"
+          required
+          placeholder="Exemple : Newsletter hebdomadaire LBG"
+          class="field"
+        />
+      </div>
+
+      <div>
+        <label
+          class="block text-sm font-extrabold text-[color:var(--navy)] mb-2"
+        >
+          Objet du mail
+        </label>
+        <input
+          type="text"
+          name="subject"
+          required
+          placeholder="Exemple : Les actualités de LBG Santé Formation"
+          class="field"
+        />
+      </div>
+
+      <div>
+        <label
+          class="block text-sm font-extrabold text-[color:var(--navy)] mb-2"
+        >
+          Fréquence d’envoi
+        </label>
+        <select name="frequency" class="field" required>
+          <option value="daily">Tous les jours</option>
+          <option value="weekly" selected>Toutes les semaines</option>
+          <option value="monthly">Tous les mois</option>
+        </select>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <label
+            class="block text-sm font-extrabold text-[color:var(--navy)] mb-2"
+          >
+            Durée
+          </label>
+          <input
+            type="number"
+            name="duration_value"
+            min="1"
+            value="1"
+            class="field"
+            required
+          />
+        </div>
+
+        <div>
+          <label
+            class="block text-sm font-extrabold text-[color:var(--navy)] mb-2"
+          >
+            Unité
+          </label>
+          <select name="duration_unit" class="field" required>
+            <option value="days">Jour(s)</option>
+            <option value="weeks" selected>Semaine(s)</option>
+            <option value="months">Mois</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label
+          class="block text-sm font-extrabold text-[color:var(--navy)] mb-2"
+        >
+          Message
+        </label>
+        <textarea
+          name="content_text"
+          rows="12"
+          required
+          class="field"
+          placeholder="Écrivez ici votre message..."
+        >
+Bonjour {{ "{{first_name}}" }},
+
+Voici les actualités de LBG Santé Formation.
+
+Merci de votre confiance.</textarea
+        >
+
+        <p class="text-xs text-slate-500 mt-3 leading-relaxed">
+          Vous pouvez utiliser :
+          <span class="font-bold text-[color:var(--navy)]"
+            >{{ "{{first_name}}" }}</span
+          >,
+          <span class="font-bold text-[color:var(--navy)]"
+            >{{ "{{last_name}}" }}</span
+          >,
+          <span class="font-bold text-[color:var(--navy)]"
+            >{{ "{{email}}" }}</span
+          >
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3 pt-2">
+        <button type="submit" class="btn-cta alt">
+          <i data-lucide="save" class="w-4 h-4"></i>
+          Enregistrer la campagne
+        </button>
+
+        <a href="{{ url_for('admin_newsletters') }}" class="btn-ghost">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          Retour
+        </a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

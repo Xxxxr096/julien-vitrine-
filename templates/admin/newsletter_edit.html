@@ -1,0 +1,108 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<section class="p-6 md:p-10">
+  <div class="max-w-4xl mx-auto card p-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-black text-[color:var(--navy)]">
+        Modifier la campagne newsletter
+      </h1>
+      <p class="text-slate-500 mt-2">
+        Modifiez l’objet, le message et la fréquence d’envoi de votre campagne.
+      </p>
+    </div>
+
+    <form method="POST" class="space-y-6">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+      <div>
+        <label class="block text-sm font-extrabold text-[color:var(--navy)] mb-2">
+          Nom de la campagne
+        </label>
+        <input
+          type="text"
+          name="name"
+          required
+          value="{{ campaign.name }}"
+          class="field"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-extrabold text-[color:var(--navy)] mb-2">
+          Objet du mail
+        </label>
+        <input
+          type="text"
+          name="subject"
+          required
+          value="{{ campaign.subject }}"
+          class="field"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-extrabold text-[color:var(--navy)] mb-2">
+          Fréquence d’envoi
+        </label>
+        <select name="frequency" class="field" required>
+          <option value="daily" {% if campaign.frequency == "daily" %}selected{% endif %}>
+            Tous les jours
+          </option>
+          <option value="weekly" {% if campaign.frequency == "weekly" %}selected{% endif %}>
+            Toutes les semaines
+          </option>
+          <option value="monthly" {% if campaign.frequency == "monthly" %}selected{% endif %}>
+            Tous les mois
+          </option>
+        </select>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <input
+          type="checkbox"
+          name="is_active"
+          id="is_active"
+          {% if campaign.is_active %}checked{% endif %}
+          class="h-4 w-4 rounded border-slate-300 text-[color:var(--teal)] focus:ring-[color:var(--teal)]"
+        />
+        <label for="is_active" class="text-sm font-bold text-[color:var(--navy)]">
+          Campagne active
+        </label>
+      </div>
+
+      <div>
+        <label class="block text-sm font-extrabold text-[color:var(--navy)] mb-2">
+          Message
+        </label>
+        <textarea
+          name="content_html"
+          rows="12"
+          required
+          class="field"
+          placeholder="Écrivez ici votre message..."
+        >{{ campaign.content_html }}</textarea>
+
+        <p class="text-xs text-slate-500 mt-3 leading-relaxed">
+          Vous pouvez utiliser :
+          <span class="font-bold text-[color:var(--navy)]">{{ "{{first_name}}" }}</span>,
+          <span class="font-bold text-[color:var(--navy)]">{{ "{{last_name}}" }}</span>,
+          <span class="font-bold text-[color:var(--navy)]">{{ "{{email}}" }}</span>
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3 pt-2">
+        <button type="submit" class="btn-cta alt">
+          <i data-lucide="save" class="w-4 h-4"></i>
+          Sauvegarder les modifications
+        </button>
+
+        <a href="{{ url_for('admin_newsletters') }}" class="btn-ghost">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          Retour
+        </a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}
