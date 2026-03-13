@@ -283,11 +283,6 @@ def seed_articles():
     db.session.commit()
 
 
-with app.app_context():
-    db.create_all()
-    seed_articles()
-
-
 def is_valid_email(email):
     return re.match(r"[^@]+@[^@]+\.[^@]+", email)
 
