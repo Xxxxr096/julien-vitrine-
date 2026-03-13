@@ -31,7 +31,7 @@ load_dotenv()
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-database_url = os.getenv("DATABASE_URL")
+database_url = os.getenv("SCALINGO_POSTGRESQL_URL") or os.getenv("DATABASE_URL")
 
 if database_url and database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
@@ -281,6 +281,11 @@ def seed_articles():
 
     db.session.add_all([a1, a2, a3])
     db.session.commit()
+
+
+with app.app_context():
+    db.create_all()
+    seed_articles()
 
 
 def is_valid_email(email):
