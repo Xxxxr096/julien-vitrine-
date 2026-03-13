@@ -1325,6 +1325,47 @@ def cron_process_newsletters():
     return {"processed": processed}, 200
 
 
+@app.route("/bootstrap-admin")
+def bootstrap_admin():
+    token = request.args.get("token")
+    expected_token = os.getenv("BOOTSTRAP_ADMIN_TOKEN")
+
+    if not expected_token or token != expected_token:
+        abort(403)
+
+    email = "francestrasbourg06@gmail.com"
+    password = "Amine1203?"
+    first_name = "Amine"
+    last_name = "Chabane"
+
+    user = User.query.filter_by(email=email).first()
+
+    if user:
+        user.is_admin = True
+        user.confirmed = True
+        user.confirmed_at = user.confirmed_at or datetime.utcnow()
+        user.must_change_password = False
+        user.password = bycrypt.generate_password_hash(password).decode("utf-8")
+        message = "Admin mis à jour avec succès."
+    else:
+        user = User(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            password=bycrypt.generate_password_hash(password).decode("utf-8"),
+            confirmed=True,
+            confirmed_at=datetime.utcnow(),
+            is_admin=True,
+            must_change_password=False,
+            newsletter=False,
+        )
+        db.session.add(user)
+        message = "Admin créé avec succès."
+
+    db.session.commit()
+    return message
+
+
 if __name__ == "__main__":
     # Mode debug activé pour voir les modifications en temps réel
     app.run(debug=True, port=5000)
